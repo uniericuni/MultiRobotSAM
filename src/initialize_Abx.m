@@ -1,4 +1,4 @@
-function [A, b, x] = initialize_Abx(Rob0, Rob1, Rob2, Rob3, NumofRobot)
+function [A, b, x] = initialize_Abx()
 %%
 % This function initalizes the adjancy matrix A and residual vector b
 % INPUT:  Number of robots to simulate
@@ -9,6 +9,10 @@ function [A, b, x] = initialize_Abx(Rob0, Rob1, Rob2, Rob3, NumofRobot)
 %           with the first column is the anchor
 %           with the second column to be the initial state
 %
+
+global INFO;
+NumofRobot = INFO.N;
+
 %% initialize A
 A = zeros(3*NumofRobot,3*NumofRobot);
 % give the initial state a very low covriance.
@@ -24,12 +28,11 @@ b = zeros(3*NumofRobot*2,1);
 %% initialize the state vector
 x = zeros(3*NumofRobot,2); 
 
-% initalize the anchors :: 4 robots!!!
-anchorRob0 = [150;0;0];
-anchorRob1 = [150;0;0];
-anchorRob2 = [150;0;0];
-anchorRob3 = [150;0;0];
-anchor = [anchorRob0;anchorRob1;anchorRob2;anchorRob3];
+anchor = [];
+for n=1:NumofRobot
+    anchorRob = [150;0;0];
+    anchor = [anchor; anchorRob];
+end
 
 % initialize the states !!
 for i = 1:NumofRobot

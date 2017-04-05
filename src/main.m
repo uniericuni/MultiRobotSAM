@@ -29,19 +29,22 @@ global PARAM;                           % global variables, should be updated
 
 % INFO
 INFO.grid_size = 0.2;                   % gird size for grid map
-INFO.mapSize = 140 * 1/grid_size;       % grid map size
+INFO.mapSize = 140 * 1/INFO.grid_size;  % grid map size
 INFO.robs = readData();                 % robot data
 INFO.N = length(INFO.robs);             % robot number
 
 % PARAM
-PARAM.map = zeros(mapSize,mapSize,3);   % grid map
+PARAM.map = zeros(INFO.mapSize,...      % grid map
+                  INFO.mapSize,3);   
 PARAM.pose_id = ones(1,INFO.N);         % current pose id for each robot
 PARAM.laser_id = ones(1,INFO.N);        % current laser(sensor) id for each robot
 
 % initialize A,b,x
-[A,b,x] = initialize();
+[A, b, x] = initialize_Abx();
 
-% main loop
+% =====================
+% Main Loop
+% =====================
 whlie true
 
     % parsing controls and observation
