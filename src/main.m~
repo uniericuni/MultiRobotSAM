@@ -20,12 +20,9 @@ clear;
 clc;
 
 % Initialize global parameters
-global INFO;                        % should not be updated
-global PARAM;                       % should be updated
+global INFO;
 INFO.robs = readData();
-INFO.N = length(INFO.robs);
-PARAM.pose_id = ones(1,INFO.N);
-PARAM.laser_id = ones(1,INFO.N);
+INFO.N = length(robs);
 
 map = initialize();
 [A,x] = initialize();
@@ -33,11 +30,8 @@ map = initialize();
 % main loop
 whlie true
 
-    % parsing data
-    [rob_id, controls, observation] = parser();
-    if size(contorls,2)==0
-        continue;
-    end
+    % parser current data
+    [rob_id, motions, observation]
 
     % factorize for each period
     if mod(t,UPDATE_PERIOD)==0
