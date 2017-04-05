@@ -1,3 +1,6 @@
+% ==================================================================
+% EECS568
+%
 % H_MAP, W_MAP: height and width of maps
 % UPDATE_PERIOD: perioud of A update
 % N: number of robots
@@ -11,6 +14,7 @@
 % map: map, Hx W x 3 | 3: for current likelihood, robot index, step
 % control: control signal
 % observation: observation signal
+% ==================================================================
 
 % =====================
 % Initialization
@@ -19,21 +23,28 @@ close all;
 clear;
 clc;
 
-% Initialize global parameters
-global INFO;                        % should not be updated
-global PARAM;                       % should be updated
-INFO.robs = readData();
-INFO.N = length(INFO.robs);
-PARAM.pose_id = ones(1,INFO.N);
-PARAM.laser_id = ones(1,INFO.N);
+% Initialize globals
+global INFO;                            % experiment configuration, should not be updated
+global PARAM;                           % global variables, should be updated
 
-map = initialize();
-[A,x] = initialize();
+% INFO
+INFO.grid_size = 0.2;                   % gird size for grid map
+INFO.mapSize = 140 * 1/grid_size;       % grid map size
+INFO.robs = readData();                 % robot data
+INFO.N = length(INFO.robs);             % robot number
+
+% PARAM
+PARAM.map = zeros(mapSize,mapSize,3);   % grid map
+PARAM.pose_id = ones(1,INFO.N);         % current pose id for each robot
+PARAM.laser_id = ones(1,INFO.N);        % current laser(sensor) id for each robot
+
+% initialize A,b,x
+[A,b,x] = initialize();
 
 % main loop
 whlie true
 
-    % parsing data
+    % parsing controls and observation
     [rob_id, controls, observation] = parser();
     if size(contorls,2)==0
         continue;

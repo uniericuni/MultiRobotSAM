@@ -1,9 +1,15 @@
 function [robs_id, controls, observations] = parser()
+% =====================
 % parser()
+%   parsing all control commands before one observatoin
 %
 % outputs:
-%   robs_id: list 
-%
+%   robs_id: vector of robot id, the nth id is cooresponding to the nth
+%            control while the last to observation
+%   controls: array, each column is one control command
+%   observations: array, each column is one observation while all observe
+%                 at the same time
+% =========================================================================
 
 % initialize global variables
 global INFO;
@@ -19,7 +25,7 @@ controls = [];
 observations = [];
 observed = false;
 
-% parsing control to queue
+% parsing controls and observations to output queue
 while ~observed
     
     min_t = Inf;
@@ -43,7 +49,7 @@ while ~observed
             min_t = t;
             min_rob = n;
         end
-            
+
     end
     
     % update control/observation queue
@@ -65,7 +71,7 @@ while ~observed
         end
         observed = true;
     end
-    
+
 end
 
 % update control/observation index

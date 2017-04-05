@@ -1,4 +1,5 @@
 function [robs_id, controls, observations] = parser()
+% =========================================================================
 % parser()
 %   parsing all control commands before one observatoin
 %
@@ -8,6 +9,7 @@ function [robs_id, controls, observations] = parser()
 %   controls: array, each column is one control command
 %   observations: array, each column is one observation while all observe
 %                 at the same time
+% =========================================================================
 
 % initialize global variables
 global INFO;
@@ -75,3 +77,5 @@ end
 % update control/observation index
 PARAM.pose_id = pose_id;
 PARAM.laser_id = laser_id;
+
+end
