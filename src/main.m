@@ -34,8 +34,8 @@ INFO.robs = readData();                 % robot data
 INFO.N = length(INFO.robs);             % robot number
 
 % PARAM
-PARAM.map = zeros(INFO.mapSize,...      % grid map
-                  INFO.mapSize,3);   
+PARAM.map = zeros(INFO.mapSize*2,...    % grid map
+                  INFO.mapSize*2,3);   
 PARAM.pose_id = ones(1,INFO.N);         % current pose id for each robot
 PARAM.laser_id = ones(1,INFO.N);        % current laser(sensor) id for each robot
 
@@ -49,14 +49,8 @@ whlie true
 
     % parsing controls and observation
     [rob_id, controls, observation] = parser();
-    if size(contorls,2)==0
-        continue;
-    end
 
     % factorize for each period
-    if mod(t,UPDATE_PERIOD)==0
-        [R,d] = factorize(x,control(1:t),observation(1:t));
-    end
     
     % read control
     u = control(t);

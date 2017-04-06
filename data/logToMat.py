@@ -18,6 +18,8 @@ def main():
         f = open(log_file, 'r+')
         for line in f:
             readLine(mat, line)
+        sorted(mat['pose'], key=lambda x:x['time'])
+        sorted(mat['laser'], key=lambda x:x['time'])
         sio.savemat(file_name, mat)
 
         # close file
