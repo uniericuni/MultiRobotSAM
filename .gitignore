@@ -4,5 +4,6 @@
 *.mat
 *.log
 *.swp
+*.m~
 
 .DS_Store
