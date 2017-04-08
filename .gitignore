@@ -1,4 +1,6 @@
 *.pdf
 *.png
+*.jpg
 *.mat
 *.log
+*.swp

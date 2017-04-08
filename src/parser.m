@@ -1,4 +1,4 @@
-function [robs_id, controls, observations] = parser()
+function [robs_id, controls, observations, time] = parser()
 % =========================================================================
 % parser()
 %   parsing all control commands before one observatoin
@@ -23,6 +23,7 @@ laser_id = PARAM.laser_id;
 robs_id = [];
 controls = [];
 observations = [];
+time = [];
 observed = false;
 
 % parsing controls and observations to output queue
@@ -54,15 +55,31 @@ while ~observed
     
     % update control/observation queue
     if mod(min_rob,2)==0
+
+        % parse id and poses
         rob_id = min_rob/2;
         robs_id = [robs_id,rob_id];
         pose = robs{rob_id}.pose{pose_id(rob_id)};
         pose_id(rob_id) = pose_id(rob_id)+1;
+
+        % detemine control
         control = [pose.vel_x; pose.vel_y; pose.vel_theta];
-        controls = [controls, control];
+        if control(1)==0 && control(2)==0 && control(3)==0      % zeros pruning
+            PARAM.prev_time = pose.time;
+            continue;
+        else
+            controls = [controls, control];
+            time = [time, pose.time-PARAM.prev_time];
+            PARAM.prev_time = pose.time;
+        end
+
     else
+
+        % parse id and poses
         rob_id = (min_rob+1)/2;
         robs_id = [robs_id,rob_id];
+
+        % detemine observation
         lasers = robs{rob_id}.laser{laser_id(rob_id)};
         laser_id(rob_id) = laser_id(rob_id)+1;
         for k=1:length(lasers)
@@ -70,6 +87,7 @@ while ~observed
             observations = [observations obs];
         end
         observed = true;
+
     end
 
 end
