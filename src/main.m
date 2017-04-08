@@ -49,9 +49,6 @@ whlie true
 
     % parsing controls and observation
     [rob_id, controls, observation] = parser();
-    if size(contorls,2)==0
-        continue;
-    end
 
     % factorize for each period
     if mod(t,UPDATE_PERIOD)==0
@@ -72,5 +69,5 @@ whlie true
     
     % optimization
     [R,b] = optimize(R,b);
-    
 end
+ 
