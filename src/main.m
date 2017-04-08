@@ -6,8 +6,8 @@
 % N: number of robots
 % T: total step number
 % A: adjacency matrix
-% b: residual vector, 3N*(t+1) x 1
-% x: state matrix, 3N x (t+1)
+% b: residual vector, 3N*(t+2) x 1
+% x: state matrix, 3N x (t+2)
 % t: current steps
 % priors: N*1 float
 % init_poses: 3N*1
@@ -45,15 +45,39 @@ PARAM.prev_time = 0;                    % time of previous state
 % initialize A,b,x
 [A, b, x] = initialize_Abx();
 
+mega_obs = [];
+mega_robidControl = [];
+mega_robidObs = [];
+mega_controls = [];
 % =====================
 % Main Loop
 % =====================
 while true
 
     % parsing controls and observation
+<<<<<<< HEAD
+    [rob_id, controls, observation] = parser();
+<<<<<<< HEAD
+    if size(contorls,2)==0
+        continue;
+    end
+    
+    % augment to mega_obs, mega_control, mega_robid
+    mega_robidObs = [mega_robidObs, rob_id(end)];
+    mega_obs = [mega_obs, observation];
+    mega_robidControl = [mega_robidControl, rob_id(1,end-1)];
+    mega_controls = [mega_controls, controls];
+    % factorize for each period
+    if mod(t,UPDATE_PERIOD)==0
+        [R,d] = factorize(x, mega_robidObs, mega_obs, mega_robidControl, mega_controls);
+    end
+=======
+=======
     [rob_id, controls, observation, time] = parser();
+>>>>>>> e1655b494c66aaeb5314a5d38ff7c0c4fac2f843
 
     % factorize for each period
+>>>>>>> 740ef26fa941194f7c0892756fd3a64aaf9adb5d
     
     % read control
     u = control(t);
@@ -62,12 +86,16 @@ while true
     z = observation(t);
     
     % update, augment state
-    [x,R] = update(x, R, u);
+    [x,R] = update(R, controls);
     
     % scanmatching
     [R,b] = scanmatch(x, map, z);
     
     % optimization
     [R,b] = optimize(R,b);
+<<<<<<< HEAD
+=======
 
+>>>>>>> e1655b494c66aaeb5314a5d38ff7c0c4fac2f843
 end
+ 
