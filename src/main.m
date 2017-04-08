@@ -34,10 +34,11 @@ INFO.robs = readData();                 % robot data
 INFO.N = length(INFO.robs);             % robot number
 
 % PARAM
-PARAM.map = zeros(INFO.mapSize,...      % grid map
-                  INFO.mapSize,3);   
+PARAM.map = zeros(INFO.mapSize*2,...    % grid map
+                  INFO.mapSize*2,3);   
 PARAM.pose_id = ones(1,INFO.N);         % current pose id for each robot
 PARAM.laser_id = ones(1,INFO.N);        % current laser(sensor) id for each robot
+PARAM.prev_time = 0;                    % time of previous state
 
 % initialize A,b,x
 [A, b, x] = initialize_Abx();
@@ -49,10 +50,12 @@ mega_controls = [];
 % =====================
 % Main Loop
 % =====================
-whlie true
+while true
 
     % parsing controls and observation
+<<<<<<< HEAD
     [rob_id, controls, observation] = parser();
+<<<<<<< HEAD
     if size(contorls,2)==0
         continue;
     end
@@ -66,6 +69,13 @@ whlie true
     if mod(t,UPDATE_PERIOD)==0
         [R,d] = factorize(x, mega_robidObs, mega_obs, mega_robidControl, mega_controls);
     end
+=======
+=======
+    [rob_id, controls, observation, time] = parser();
+>>>>>>> e1655b494c66aaeb5314a5d38ff7c0c4fac2f843
+
+    % factorize for each period
+>>>>>>> 740ef26fa941194f7c0892756fd3a64aaf9adb5d
     
     % read control
     u = control(t);
@@ -81,5 +91,9 @@ whlie true
     
     % optimization
     [R,b] = optimize(R,b);
-    
+<<<<<<< HEAD
+=======
+
+>>>>>>> e1655b494c66aaeb5314a5d38ff7c0c4fac2f843
 end
+ 

@@ -1,4 +1,8 @@
 *.pdf
 *.png
+*.jpg
 *.mat
 *.log
+*.swp
+
+.DS_Store
