@@ -6,8 +6,8 @@
 % N: number of robots
 % T: total step number
 % A: adjacency matrix
-% b: residual vector, 3N*(t+1) x 1
-% x: state matrix, 3N x (t+1)
+% b: residual vector, 3N*(t+2) x 1
+% x: state matrix, 3N x (t+2)
 % t: current steps
 % priors: N*1 float
 % init_poses: 3N*1
@@ -42,6 +42,10 @@ PARAM.laser_id = ones(1,INFO.N);        % current laser(sensor) id for each robo
 % initialize A,b,x
 [A, b, x] = initialize_Abx();
 
+mega_obs = [];
+mega_robidControl = [];
+mega_robidObs = [];
+mega_controls = [];
 % =====================
 % Main Loop
 % =====================
@@ -52,10 +56,15 @@ whlie true
     if size(contorls,2)==0
         continue;
     end
-
+    
+    % augment to mega_obs, mega_control, mega_robid
+    mega_robidObs = [mega_robidObs, rob_id(end)];
+    mega_obs = [mega_obs, observation];
+    mega_robidControl = [mega_robidControl, rob_id(1,end-1)];
+    mega_controls = [mega_controls, controls];
     % factorize for each period
     if mod(t,UPDATE_PERIOD)==0
-        [R,d] = factorize(x,control(1:t),observation(1:t));
+        [R,d] = factorize(x, mega_robidObs, mega_obs, mega_robidControl, mega_controls);
     end
     
     % read control
@@ -65,7 +74,7 @@ whlie true
     z = observation(t);
     
     % update, augment state
-    [x,R] = update(x, R, u);
+    [x,R] = update(R, controls);
     
     % scanmatching
     [R,b] = scanmatch(x, map, z);
