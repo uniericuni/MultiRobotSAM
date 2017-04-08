@@ -36,8 +36,8 @@ INFO.N = length(INFO.robs);             % robot number
 INFO.SCORE_MAX = Inf;                   % minimum acceptable score for contour
 
 % PARAM
-PARAM.map = zeros(INFO.mapSize*2,...    % grid map
-                  INFO.mapSize*2,3);   
+PARAM.map = zeros(INFO.mapSize*2+1,...  % grid map
+                  INFO.mapSize*2+1,3);   
 PARAM.pose_id = ones(1,INFO.N);         % current pose id for each robot
 PARAM.laser_id = ones(1,INFO.N);        % current laser(sensor) id for each robot
 PARAM.prev_time = 0;                    % time of previous state
