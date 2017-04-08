@@ -26,14 +26,13 @@ clc;
 % Initialize globals
 global INFO;                            % experiment configuration, should not be updated
 global PARAM;                           % global variables, should be updated
-addpath('../lib');                      % add data structure library
 
 % INFO
 INFO.grid_size = 0.2;                   % gird size for grid map
 INFO.mapSize = 140 * 1/INFO.grid_size;  % grid map size
 INFO.robs = readData();                 % robot data
 INFO.N = length(INFO.robs);             % robot number
-INFO.SCORE_MAX = Inf;                   % minimum acceptable score for contour
+INFO.SCORE_MIN = 0;                     % minimum 
 
 % PARAM
 PARAM.map = zeros(INFO.mapSize*2,...    % grid map

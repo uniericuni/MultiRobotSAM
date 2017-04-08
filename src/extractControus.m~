@@ -1,4 +1,4 @@
-function local_map = extractControus(observations)
+function localMap = extractControus(observations)
 
 % initialize global variables
 global INFO;
@@ -19,7 +19,7 @@ for i=1:o_num
     range = observations(1,i);
     bearing = observations(2,i);
     point = [uint8(range*cos(bearing)); uint8(range*sin(bearing))];
-    local_map(init_pos(2)-point(2), init_pos(1)+point(1)) = 1;
+    local_map(point(2),point(1)) = 1;
     points = [points; point];
 
 end

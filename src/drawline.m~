@@ -1,0 +1,8 @@
+function map = drawline(map, point1, point2)
+
+x_d = point2(1)-point1(1);
+y_d = point2(2)-point1(2);
+if x_d >= y_d
+    for 
+else
+end
