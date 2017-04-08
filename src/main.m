@@ -38,6 +38,7 @@ PARAM.map = zeros(INFO.mapSize*2,...    % grid map
                   INFO.mapSize*2,3);   
 PARAM.pose_id = ones(1,INFO.N);         % current pose id for each robot
 PARAM.laser_id = ones(1,INFO.N);        % current laser(sensor) id for each robot
+PARAM.prev_time = 0;                    % time of previous state
 
 % initialize A,b,x
 [A, b, x] = initialize_Abx();
@@ -45,10 +46,10 @@ PARAM.laser_id = ones(1,INFO.N);        % current laser(sensor) id for each robo
 % =====================
 % Main Loop
 % =====================
-whlie true
+while true
 
     % parsing controls and observation
-    [rob_id, controls, observation] = parser();
+    [rob_id, controls, observation, time] = parser();
 
     % factorize for each period
     
@@ -66,5 +67,5 @@ whlie true
     
     % optimization
     [R,b] = optimize(R,b);
-    
+
 end

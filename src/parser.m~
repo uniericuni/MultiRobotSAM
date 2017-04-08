@@ -55,39 +55,30 @@ while ~observed
     
     % update control/observation queue
     if mod(min_rob,2)==0
-
-        % parse id and poses
         rob_id = min_rob/2;
         robs_id = [robs_id,rob_id];
         pose = robs{rob_id}.pose{pose_id(rob_id)};
         pose_id(rob_id) = pose_id(rob_id)+1;
-
-        % detemine control
         control = [pose.vel_x; pose.vel_y; pose.vel_theta];
         if control(1)==0 && control(2)==0 && control(3)==0      % zeros pruning
             PARAM.prev_time = pose.time;
             continue;
         else
             controls = [controls, control];
-            time = [time, pose.time-PARAM.prev_time];
+            time = [time, pose.time-];
             PARAM.prev_time = pose.time;
         end
-
     else
-
-        % parse id and poses
         rob_id = (min_rob+1)/2;
         robs_id = [robs_id,rob_id];
-
-        % detemine observation
         lasers = robs{rob_id}.laser{laser_id(rob_id)};
         laser_id(rob_id) = laser_id(rob_id)+1;
         for k=1:length(lasers)
             obs = [lasers.bearing; lasers.range; lasers.intensity];
             observations = [observations obs];
         end
+        time = [time, lasers.time];
         observed = true;
-
     end
 
 end
