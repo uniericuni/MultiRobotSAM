@@ -77,6 +77,7 @@ while true
     % augment R for control
     [R, d] = augument_R( R, d, x, controls, rob_id, time );
     
+    %continue;
     % add the observation factors
     scanMatching( observations, XXXX );
    
