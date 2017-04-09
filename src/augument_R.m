@@ -9,7 +9,7 @@ global PARAM;                           % global variables, should be updated
 last_state = state(:,s_c);
 augument_R =[];
 robot_id = robot_id(1:length(robot_id) - 1); %exclude obsevcation
-overall_control = zeros(3,4);
+overall_control = zeros(2,4);
 overall_dt = zeros(1,4);
 %combine control
 for id = 1:4
@@ -23,12 +23,14 @@ end
 augument_R = zeros(12,12);
 augument_I = zeros(12,12);
 M = diag([INFO.Sigma_v,INFO.Sigma_omega].^2);
-for i = 1:4
-    id = robot_id(i);
+
+unique_id = unique(robot_id);
+for i = 1:length(unique_id)
+    id = unique_id(i);
     theta = last_state(3*id);
-    v = overall_control(1,i);
-    omega = overall_control(2,i);
-    dt = overall_dt(i);
+    v = overall_control(1,id);
+    omega = overall_control(2,id);
+    dt = overall_dt(id);
     
     
     Gt = [ 1, 0, -v*sin(theta + dt*omega);
@@ -43,8 +45,8 @@ for i = 1:4
     Q =  Vt*M*Vt';
     
     w = inv((Q')^0.5);
-    augument_R(3*i-2:3*i,3*i-2:3*i) = w*Gt;
-    augument_I(3*i-2:3*i,3*i-2:3*i) = -w*eye(3);
+    augument_R(3*id-2:3*id,3*id-2:3*id) = w*Gt;
+    augument_I(3*id-2:3*id,3*id-2:3*id) = -w*eye(3);
 end
 
 [R_r,R_c] = size(R);

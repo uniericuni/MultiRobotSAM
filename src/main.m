@@ -45,7 +45,7 @@ PARAM.prev_time = 0;                    % time of previous state
 
 % initialize A,b,x
 [A, b, x] = initialize_Abx();
-
+[R,d] = sparse_factorization(A,b);
 %mega_obs = [];
 %mega_robidControl = [];
 %mega_robidObs = [];
@@ -77,6 +77,7 @@ while true
     % augment R for control
     [R, d] = augument_R( R, d, x, controls, rob_id, time );
     
+    %continue;
     % add the observation factors
     scanMatching( observations, XXXX );
    
