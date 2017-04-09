@@ -33,11 +33,15 @@ INFO.grid_size = 0.2;                   % gird size for grid map
 INFO.mapSize = 140 * 1/INFO.grid_size;  % grid map size
 INFO.robs = readData();                 % robot data
 INFO.N = length(INFO.robs);             % robot number
-INFO.COST_MAX = Inf;                    % minimum acceptable score for contour
+INFO.COST_MAX = INFO.grid_size*20;      % minimum acceptable score for contour
+INFO.GLOBAL_BUFF_SIZE = 500;            % buffer size for global map history
 
 % PARAM
 PARAM.map = zeros(INFO.mapSize*2+1,...  % grid map
-                  INFO.mapSize*2+1,3);   
+                  INFO.mapSize*2+1);
+PARAM.buff_size = 0;
+PARAM.obs_buff = ...                    % observer to map buffer
+            cell(INFO.GLOBAL_BUFF_SIZE);
 PARAM.pose_id = ones(1,INFO.N);         % current pose id for each robot
 PARAM.laser_id = ones(1,INFO.N);        % current laser(sensor) id for each robot
 PARAM.prev_time = zeros(1,INFO.N);      % time of previous state
@@ -54,7 +58,8 @@ mega_controls = [];
 % Main Loop
 % =====================
 c=0;
-cc=0;
+motion_counter=0;
+motion_cycle=INFO.LOCAL_BUFF_SIZE;
 xs = [];
 while true
     
@@ -63,24 +68,16 @@ while true
     [rob_id, controls, pred_pose, observation, time] = parser();
     
     if ~(size(controls,2)==0)
-        cc = cc+1;
+        moition_counter = motion_counter + 1;
         x = update_state(x,controls,rob_id, time );
-        xs = [xs, [state;rob_id(end)]];
+        xs = [xs, [pred_pose;rob_id(end)]];
     else
         continue;
     end
     
     % merge map 
-    extractNewMap(observation, pred_pose);
-    
-    if mod(cc,100)==99
-        fprintf(['iteration: ', num2str(c), '\n']);
-        im = PARAM.map(:,:,1);
-        im(im>0)=1;
-        im(im<0)=-1;
-        imagesc(im);
-        pause(0.2);
-    end
+    map_obs = extractNewMap(observation, pred_pose, size(x,2), rob_id(end));
+    releaseBuffer(map_obs);
     
     %imagesc(PARAM.map(:,:,1));
     %pause(0.2);

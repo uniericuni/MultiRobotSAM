@@ -38,35 +38,6 @@ for i=1:o_num
     end
 
 end
-o_num = size(points, 2);
-
-% parse joins into priority queue
-parents = zeros(o_num,1);	% store point index
-children = zeros(o_num,1);
-for i=1:o_num
-
-    % search for nearest neighbor
-    parents(i) = i;
-    min_dist = Inf;
-    min_index = 0;
-    for j=1:o_num
-        dist = norm(points(:,i) - points(:,j));
-        if min_dist>dist && parents(j)~=i
-            min_dist = dist;
-            min_index = j;
-        end
-    end
-    
-    % making join struct
-    obs = struct();
-    obs.index = i;          % parent/child pair index
-    obs.val = min_dist;
-    children(i) = min_index;
-    
-    % throw into priority queue
-    H.InsertKey(obs);
-
-end
 
 % mark negative points
 
@@ -75,22 +46,47 @@ for i=1:length(neg_points)
 end
 
 % iteratively update contours
-
-isMarked = HashTable(o_num);
-while ~H.IsEmpty()
-    
-    obs = H.ExtractMin();
-    isMarked.Add(num2str(parents(obs.index)), true);        % set parent as marked
-    if isMarked.ContainsKey(num2str(children(obs.index)))   % if child has been observed, in avoidance of loop
-        continue;
-    elseif obs.val > INFO.COST_MAX                          % if cost too large
-        continue;
-    elseif children(obs.index) == 0                         % if no parents
-        continue;
-    else
-        local_map = drawline(local_map, points(:,parents(obs.index)), points(:,children(obs.index)), 1);
-    end    
-    
+%{
+for i=1:size(points,2)
+    local_map = drawline(local_map, points(:,i), points(:,i), 1);
 end
+%}
+o_num = size(points, 2);
+isMarked = HashTable(o_num);
+
+if o_num~=0
+    
+    point = points(:,:,1);
+    isMarked.Add(num2str(1), true);
+    while ~isMarked.Count()<o_num
+    
+        min_id = 0;
+        min_dist = Inf;
+        for j=1:o_num
+        
+            if isMarked.ContainsKey(num2str(j))
+                continue
+            end
+        
+            dist = norm(point - points(:,j));
+        
+            if dist<min_dist
+                min_dist = dist;
+                min_id = j;
+            end
+        
+        end
+    
+        if min_dist <= INFO.COST_MAX
+            local_map = drawline(local_map, point, points(:,min_id), 1);
+        elseif min_id==0
+            break
+        end
+    
+        point = points(:,min_id);
+        isMarked.Add(num2str(min_id), true);
+    end
+end
+
 
 end
