@@ -34,7 +34,8 @@ INFO.mapSize = 140 * 1/INFO.grid_size;  % grid map size
 INFO.robs = readData();                 % robot data
 INFO.N = length(INFO.robs);             % robot number
 INFO.COST_MAX = Inf;                    % minimum acceptable score for contour
-
+INFO.Sigma_v = 0.001;                   % velocity control uncertainty
+INFO.Sigma_omega = 0.001;               % omega control uncertainty
 % PARAM
 PARAM.map = zeros(INFO.mapSize*2+1,...  % grid map
                   INFO.mapSize*2+1,3);   
