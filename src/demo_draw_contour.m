@@ -83,7 +83,7 @@ while true
     if mod(cc, 100)==99
         imagesc(PARAM.local_buff.map);
         pause(0.2);
-        releaseBuffer();
+        [R,d] = releaseBuffer(R,d);
         fprintf(['\niteration: ', num2str(c)]);
     end
     %imagesc(PARAM.map(:,:,1));
