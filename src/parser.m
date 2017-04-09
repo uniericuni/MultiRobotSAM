@@ -1,4 +1,4 @@
-function [robs_id, controls, observations, time] = parser()
+function [robs_id, controls, states, observations, time] = parser()
 % =========================================================================
 % parser()
 %   parsing all control commands before one observatoin
@@ -23,6 +23,7 @@ laser_id = PARAM.laser_id;
 robs_id = [];
 controls = [];
 observations = [];
+states = [];
 time = [];
 observed = false;
 
@@ -64,11 +65,13 @@ while ~observed
 
         % detemine control
         control = [pose.vel_x; pose.vel_y; pose.vel_theta];
+        state = [pose.x; pose.y; pose.theta];
         if control(1)==0 && control(2)==0 && control(3)==0      % zeros pruning
             PARAM.prev_time = pose.time;
             continue;
         else
             controls = [controls, control];
+            states = [states, state];
             time = [time, pose.time-PARAM.prev_time];
             PARAM.prev_time = pose.time;
         end

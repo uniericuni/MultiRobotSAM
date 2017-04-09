@@ -59,13 +59,23 @@ while true
     
     c=c+1;
     % parsing controls and observation
-    [rob_id, controls, observation, time] = parser();   
+    [rob_id, controls, states, observation, time] = parser();
+    xs = [xs, states];
     if ~(size(controls,2)==0 || c==1)
         cc = cc+1;
         x = update_state(x,controls,rob_id, time );
-    else
-        continue;
+    %else
     end
+    if mod(c,1000)==0 && length(x)~=0
+        hold on;
+        plot(x(1,:),x(2,:));
+        plot(xs(1,:),xs(2,:));
+        
+    end
+end
+    %    continue;
+    %end
+    %{
     pred_pose = x( 3*1-2:1*3,end);
     
     % merge map
@@ -87,5 +97,5 @@ while true
     end
     %imagesc(PARAM.map(:,:,1));
     %pause(0.2);
-    
 end
+        %}
