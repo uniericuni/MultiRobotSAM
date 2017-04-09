@@ -40,7 +40,8 @@ PARAM.map = zeros(INFO.mapSize*2+1,...  % grid map
                   INFO.mapSize*2+1,3);   
 PARAM.pose_id = ones(1,INFO.N);         % current pose id for each robot
 PARAM.laser_id = ones(1,INFO.N);        % current laser(sensor) id for each robot
-PARAM.prev_time = 0;                    % time of previous state
+PARAM.prev_time = zeros(1,INFO.N);      % time of previous state
+PARAM.prev_pose = zeros(3,INFO.N);      % pose of previous state
 
 % initialize A,b,x
 [A, b, x] = initialize_Abx();
@@ -60,7 +61,11 @@ while true
     c=c+1;
     % parsing controls and observation
     [rob_id, controls, state, observation, time] = parser();
-    
+    if ~(size(controls,2)==0)
+        controls
+        time
+    end
+    %{
     if ~(size(controls,2)==0 || c==1)
         cc = cc+1;
         x = update_state(x,controls,rob_id, time );
@@ -69,7 +74,7 @@ while true
     else
         continue;
     end
-    %}
+    
     
     % merge map
     % pred_pose = xs(3*rob_id(end)-2 : 3*rob_id(end), end);
@@ -89,6 +94,7 @@ while true
         imagesc(im);
         pause(0.2);
     end
+    %}
     %imagesc(PARAM.map(:,:,1));
     %pause(0.2);
 end

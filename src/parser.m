@@ -66,12 +66,17 @@ while ~observed
         % detemine control
         control = [pose.vel_x; pose.vel_y; pose.vel_theta];
         if control(1)==0 && control(2)==0 && control(3)==0      % zeros pruning
-            PARAM.prev_time = pose.time;
+            PARAM.prev_time(1,rob_id) = pose.time;
+            PARAM.prev_pose(:,rob_id) = [pose.x; pose.y; pose.theta];
             continue;
         else
+            time = [time, pose.time - PARAM.prev_time(1,rob_id)];
+            control = [ sqrt((pose.x-PARAM.prev_pose(1,rob_id))^2+...
+                        (pose.y-PARAM.prev_pose(2,rob_id))^2)./time(end);...
+                        (pose.theta-PARAM.prev_pose(3,rob_id))./time(end) ];
             controls = [controls, control];
-            time = [time, pose.time-PARAM.prev_time];
-            PARAM.prev_time = pose.time;
+            PARAM.prev_time(1,rob_id) = pose.time;
+            PARAM.prev_pose(:,rob_id) = [pose.x; pose.y; pose.theta];
         end
 
     else
