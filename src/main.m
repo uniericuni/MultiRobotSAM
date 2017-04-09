@@ -45,10 +45,10 @@ PARAM.prev_time = 0;                    % time of previous state
 % initialize A,b,x
 [A, b, x] = initialize_Abx();
 
-mega_obs = [];
-mega_robidControl = [];
-mega_robidObs = [];
-mega_controls = [];
+%mega_obs = [];
+%mega_robidControl = [];
+%mega_robidObs = [];
+%mega_controls = [];
 % =====================
 % Main Loop
 % =====================
@@ -59,7 +59,7 @@ while true
     if size(contorls,2)==0
         continue;
     end
-    
+    %{
     % augment to mega_obs, mega_control, mega_robid
     mega_robidObs = [mega_robidObs, rob_id(end)];
     mega_obs = [mega_obs, observation];
@@ -69,7 +69,7 @@ while true
     if mod(t,UPDATE_PERIOD)==0
         [R,d] = factorize(x, mega_robidObs, mega_obs, mega_robidControl, mega_controls);
     end
-
+    %}
     % factorize for each period
     
     % read control
