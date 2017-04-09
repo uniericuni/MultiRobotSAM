@@ -1,4 +1,4 @@
-function [state] = update_state( state,control,robot_id, delta_time )
+function [state] = update_state( state,control, robot_id, delta_time )
 % input state: 3N*(t+1) control 3*C robot_id C
 % output state 3N*(t+2)
 
@@ -9,7 +9,7 @@ next_state = state(:,s_c);
 [c_r,c_c] = size(control);
 
 for i = 1:length(c_c)
-    id = robot_it(i);
+    id = robot_id(i);
     robot_state = next_state(3*id-2:3*id);
     robot_control = control(:,i);
     robot_state = velocity_transition(robot_state,robot_control,delta_time(i));

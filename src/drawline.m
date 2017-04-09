@@ -25,7 +25,7 @@ end
 if x1 == x2
     nx = floor(x1/INFO.grid_size);
     n_y1 = floor((y1)/INFO.grid_size);
-    n_y2 = floor((y2)/INFO.grid_size);ter
+    n_y2 = floor((y2)/INFO.grid_size);
     n_sy = min(n_y1,n_y2);
     n_ey = max(n_y1,n_y2);
     for i = n_sy:n_ey

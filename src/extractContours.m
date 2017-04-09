@@ -1,4 +1,4 @@
-function local_map = extractContours(observations)
+function local_map = extractContours(observations, pred_pose)
 % =========================================================================
 % extracContours():
 %   connect observations to piece-wise lines local map
@@ -19,8 +19,7 @@ H = MinHeap(o_num);
 localMap = {};
 
 % initiate local map
-local_map = zeros(INFO.mapSize*2,...
-                  INFO.mapSize*2); 
+local_map = zeros(size(PARAM.map(:,:,1)));
 init_pos = [INFO.mapSize; INFO.mapSize];
 
 % observations to points
@@ -30,7 +29,7 @@ for i=1:o_num
     range = observations(1,i);
     bearing = observations(2,i);
     % TODO: add predicted positino  
-    point = [range*cos(bearing); range*sin(bearing)];
+    point = [range*cos(bearing)+pred_pose(3); range*sin(bearing)+pred_pose(3)]+pred_pose(1:2);
     points = [points, point];
 
 end
@@ -74,7 +73,7 @@ while ~H.IsEmpty()
     elseif obs.val > INFO.COST_MAX                          % if cost too large
         continue;
     else
-        local_map = drawline(local_map, points(parents(obs.index)), points(chilredn(obs.index)));
+        local_map = drawline(local_map, points(:,parents(obs.index)), points(:,children(obs.index)));
     end    
     
 end
