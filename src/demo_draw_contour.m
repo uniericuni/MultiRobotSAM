@@ -29,8 +29,8 @@ global PARAM;                           % global variables, should be updated
 addpath('../lib');                      % add data structure library
 
 % INFO
-INFO.grid_size = 0.2;                   % gird size for grid map
-INFO.mapSize = 140 * 1/INFO.grid_size;  % grid map size
+INFO.grid_size = 0.1;                   % gird size for grid map
+INFO.mapSize = 70 * 1/INFO.grid_size;  % grid map size
 INFO.robs = readData();                 % robot data
 INFO.N = length(INFO.robs);             % robot number
 INFO.COST_MAX = Inf;                    % minimum acceptable score for contour
@@ -53,19 +53,39 @@ mega_controls = [];
 % Main Loop
 % =====================
 c=0;
+cc=0;
+xs = [];
 while true
-
+    
     c=c+1;
-
     % parsing controls and observation
     [rob_id, controls, observation, time] = parser();   
-    if size(controls,2)==0 || c==1
+    if ~(size(controls,2)==0 || c==1)
+        cc = cc+1;
+        x = update_state(x,controls,rob_id, time );
+    else
         continue;
     end
+    pred_pose = x( 3*1-2:1*3,end);
     
-    x = update_state(x,controls,rob_id, time );
-    map = extractContours(observation, x(3*rob_id(end,1)-2:3*rob_id(end,1)));
-    PARAM.map(:,:,1) = max(map, PARAM.map(:,:,1));
-    fprintf(['iteration: ', num2str(c), '\n']);
-
+    % merge map
+    [n_map,map] = extractContours(observation,  pred_pose);
+    %n_map = propogateGauss(n_map);
+    %map = propogateGauss(map);
+    map_temp = PARAM.map(:,:,1);
+    map_temp(n_map>0) = min(map_temp(n_map>0), -1*n_map(n_map>0));
+    map_temp(map>0) = max(map_temp(map>0), map(map>0));
+    PARAM.map(:,:,1) = map_temp;
+    
+    if mod(cc,100)==0
+        fprintf(['iteration: ', num2str(c), '\n']);
+        im = PARAM.map(:,:,1);
+        im(im>0)=1;
+        im(im<0)=-1;
+        imagesc(im);
+        pause(0.2);
+    end
+    %imagesc(PARAM.map(:,:,1));
+    %pause(0.2);
+    
 end

@@ -1,4 +1,4 @@
-function [total_cost,delta_] = alignment(local_map, global_map, pred_pose)
+function [map, delta_] = alignment(local_map, global_map)
 % =========================================================================
 % alignment():
 %   search for best alignment along the global map
@@ -38,17 +38,18 @@ function [total_cost,delta_] = alignment(local_map, global_map, pred_pose)
         tform = affine2d(t');
         local_map_r = imwarp(local_map, Rin, tform, 'OutPutView', Rin);
         
-        tic;
         for j=-5:1:5                                          % x translation
             for k=-5:1:5                                      % y translation
                 
                 x = j+pred_pose(1);
                 y = -1*(k+pred_pose(2));
+                %{
                 t = [ 1, 0, j+pred_pose(1);
                       0, 1, k+pred_pose(2);
                       0, 0, 1];
                 tform = affine2d(t');
                 local_map_rt = imwarp(local_map_r, Rin, tform, 'OutPutView', Rin);
+                %}
                 
                 if y>=0
                     Y_MIN1 = y+1; Y_MAX1 = Y; 
@@ -76,5 +77,14 @@ function [total_cost,delta_] = alignment(local_map, global_map, pred_pose)
 
             end
         end
-        toc;
+        
+        % transform to align
+        
+        theta = deg2rad(delta_(1));
+        t = [ cos(theta), -sin(theta), delta_(2)+pred_pose(1);
+              sin(theta), cos(theta),  delta_(3)+pred_pose(2);
+                       0,          0,                       1];
+        tform = affine2d(t');
+        map = imwarp(local_map, Rin, tform, 'OutPutView', Rin);
+        
     end

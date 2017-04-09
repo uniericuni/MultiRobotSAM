@@ -1,4 +1,4 @@
-function [ map ] = drawline(map,point1,point2)
+function [ map ] = drawline(map,point1,point2, p)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 global INFO;                            % experiment configuration, should not be updated
@@ -7,8 +7,6 @@ global PARAM;
 [ny,nx] = size(map);
 origin_x = round(nx/2) + 1;
 origin_y = round(ny/2) ;
-
-p = 1;
 
 if ( point1(2) <= point2(2))
     x1 = point1(1);
