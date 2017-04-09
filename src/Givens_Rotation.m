@@ -18,7 +18,6 @@ M_2 = size(R,2);            % size (col number) of orignal R
 % assertions
 assert( M==size(d,1) );
 assert( K==size(lamda,1) );
-assert();
 if M == K_2                 % this is observation
     R = [R; newMatrix];     % get size (M+K) x M
 else                        % this is control
