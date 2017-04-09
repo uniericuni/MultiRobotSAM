@@ -1,4 +1,4 @@
-function [map, delta_] = alignment(local_map, global_map)
+function [delta_] = alignment(l_map, g_map)
 % =========================================================================
 % alignment():
 %   search for best alignment along the global map
@@ -15,8 +15,20 @@ function [map, delta_] = alignment(local_map, global_map)
 %   
 % =========================================================================
 
-    % gradient ascent
-    % TODO
+    % global initiate
+    global PARAM;
+    global INFO;
+        
+    % proccessed to piecewise line walls
+    l_map(l_map>0) = 1; l_map(l_map<0) = -1;
+    g_map(g_map>0) = 1; g_map(g_map<0) = -1;
+    hp = [0, -1/4, 0; -1/4, 2, -1/4; 0, -1/4, 0];
+    l_map = conv2(l_map, hp, 'same');
+    g_map = conv2(g_map, hp, 'same');
+    l_map(l_map>0) = 1; l_map(l_map<0) = -1;
+    g_map(g_map>0) = 1; g_map(g_map<0) = -1;
+    global_map = g_map;
+    local_map = l_map;
     
     % specify warping output field
     [X,Y] = size(local_map);
@@ -28,7 +40,7 @@ function [map, delta_] = alignment(local_map, global_map)
     % exhuastive search
     delta_ = [];
     min_cost = Inf;
-    for i=-180:2:178                                          % rotation
+    for i=-90:1:90                                          % rotation
         
         % rotation around center and crop to original size
         theta = deg2rad(i);
@@ -38,8 +50,8 @@ function [map, delta_] = alignment(local_map, global_map)
         tform = affine2d(t');
         local_map_r = imwarp(local_map, Rin, tform, 'OutPutView', Rin);
         
-        for j=-5:1:5                                          % x translation
-            for k=-5:1:5                                      % y translation
+        for j=-8:2:8                                            % x translation
+            for k=-8:2:8                                        % y translation
                 
                 x = j+pred_pose(1);
                 y = -1*(k+pred_pose(2));
@@ -79,12 +91,12 @@ function [map, delta_] = alignment(local_map, global_map)
         end
         
         % transform to align
-        
+        %{
         theta = deg2rad(delta_(1));
         t = [ cos(theta), -sin(theta), delta_(2)+pred_pose(1);
               sin(theta), cos(theta),  delta_(3)+pred_pose(2);
                        0,          0,                       1];
         tform = affine2d(t');
         map = imwarp(local_map, Rin, tform, 'OutPutView', Rin);
-        
+        %}
     end

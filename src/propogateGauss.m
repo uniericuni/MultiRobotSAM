@@ -11,8 +11,10 @@ function map = propogateGauss(map)
 %   
 % =========================================================================
 
+% propogate likelihood
 ksize = 5;
 sigma = ksize/6;
 h = fspecial('gaussian', ksize, sigma);
 map_g = conv2(map, h, 'same');
 map = max(map_g, map);
+
