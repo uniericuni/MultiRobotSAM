@@ -60,31 +60,18 @@ while true
     
     c=c+1;
     % parsing controls and observation
-    [rob_id, controls, state, observation, time] = parser();
+    [rob_id, controls, pred_pose, observation, time] = parser();
+    
     if ~(size(controls,2)==0)
-        controls
-        time
-    end
-    %{
-    if ~(size(controls,2)==0 || c==1)
         cc = cc+1;
         x = update_state(x,controls,rob_id, time );
         xs = [xs, [state;rob_id(end)]];
-        pred_pose = state;
     else
         continue;
     end
     
-    
-    % merge map
-    % pred_pose = xs(3*rob_id(end)-2 : 3*rob_id(end), end);
-    [n_map,map] = extractContours(observation, pred_pose);
-    %n_map = propogateGauss(n_map);
-    %map = propogateGauss(map);
-    map_temp = PARAM.map(:,:,1);
-    map_temp(n_map>0) = min(map_temp(n_map>0), -1*n_map(n_map>0));
-    map_temp(map>0) = max(map_temp(map>0), map(map>0));
-    PARAM.map(:,:,1) = map_temp;
+    % merge map 
+    extractNewMap(observation, pred_pose);
     
     if mod(cc,100)==99
         fprintf(['iteration: ', num2str(c), '\n']);
@@ -94,7 +81,7 @@ while true
         imagesc(im);
         pause(0.2);
     end
-    %}
+    
     %imagesc(PARAM.map(:,:,1));
     %pause(0.2);
 end

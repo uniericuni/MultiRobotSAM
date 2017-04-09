@@ -59,7 +59,6 @@ while ~observed
 
         % parse id and poses
         rob_id = min_rob/2;
-        robs_id = [robs_id,rob_id];
         pose = robs{rob_id}.pose{pose_id(rob_id)};
         pose_id(rob_id) = pose_id(rob_id)+1;
 
@@ -70,6 +69,7 @@ while ~observed
             PARAM.prev_pose(:,rob_id) = [pose.x; pose.y; pose.theta];
             continue;
         else
+            robs_id = [robs_id,rob_id];
             time = [time, pose.time - PARAM.prev_time(1,rob_id)];
             control = [ sqrt((pose.x-PARAM.prev_pose(1,rob_id))^2+...
                         (pose.y-PARAM.prev_pose(2,rob_id))^2)./time(end);...
