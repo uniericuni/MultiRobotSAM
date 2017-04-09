@@ -33,7 +33,7 @@ INFO.grid_size = 0.2;                   % gird size for grid map
 INFO.mapSize = 140 * 1/INFO.grid_size;  % grid map size
 INFO.robs = readData();                 % robot data
 INFO.N = length(INFO.robs);             % robot number
-INFO.SCORE_MAX = Inf;                   % minimum acceptable score for contour
+INFO.COST_MAX = Inf;                    % minimum acceptable score for contour
 
 % PARAM
 PARAM.map = zeros(INFO.mapSize*2+1,...  % grid map
@@ -55,47 +55,6 @@ mega_controls = [];
 while true
 
     % parsing controls and observation
-<<<<<<< HEAD
-    [rob_id, controls, observation] = parser();
-<<<<<<< HEAD
-    if size(contorls,2)==0
-        continue;
-    end
-    
-    % augment to mega_obs, mega_control, mega_robid
-    mega_robidObs = [mega_robidObs, rob_id(end)];
-    mega_obs = [mega_obs, observation];
-    mega_robidControl = [mega_robidControl, rob_id(1,end-1)];
-    mega_controls = [mega_controls, controls];
-    % factorize for each period
-    if mod(t,UPDATE_PERIOD)==0
-        [R,d] = factorize(x, mega_robidObs, mega_obs, mega_robidControl, mega_controls);
-    end
-=======
-=======
-    [rob_id, controls, observation, time] = parser();
->>>>>>> e1655b494c66aaeb5314a5d38ff7c0c4fac2f843
 
-    % factorize for each period
->>>>>>> 740ef26fa941194f7c0892756fd3a64aaf9adb5d
-    
-    % read control
-    u = control(t);
-    
-    % read observation
-    z = observation(t);
-    
-    % update, augment state
-    [x,R] = update(R, controls);
-    
-    % scanmatching
-    [R,b] = scanmatch(x, map, z);
-    
-    % optimization
-    [R,b] = optimize(R,b);
-<<<<<<< HEAD
-=======
-
->>>>>>> e1655b494c66aaeb5314a5d38ff7c0c4fac2f843
 end
  

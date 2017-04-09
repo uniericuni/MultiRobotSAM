@@ -1,4 +1,4 @@
-function local_map = extractControus(observations)
+function local_map = extractContours(observations)
 % =========================================================================
 % extracContours():
 %   connect observations to piece-wise lines local map
@@ -14,7 +14,7 @@ function local_map = extractControus(observations)
 % initialize global variables
 global INFO;
 global PARAM;
-o_num = size(observations, 4);
+o_num = size(observations, 2);
 H = MinHeap(o_num);
 localMap = {};
 
@@ -29,9 +29,9 @@ for i=1:o_num
 
     range = observations(1,i);
     bearing = observations(2,i);
-    point = [uint8(range*cos(bearing)); uint8(range*sin(bearing))];
-    local_map(init_pos(2)-point(2), init_pos(1)+point(1)) = 1;
-    points = [points; point];
+    % TODO: add predicted positino  
+    point = [range*cos(bearing); range*sin(bearing)];
+    points = [points, point];
 
 end
 
@@ -65,13 +65,13 @@ end
 
 % iteratively update contours
 isMarked = HashTable(o_num);
-while ~H.isEmpty()
+while ~H.IsEmpty()
     
     obs = H.ExtractMin();
-    isMarked.Set(parents(obs.index), true);         % set parent as marked
-    if isMarked.ContainsKey(children(obs.index))    % if child has been observed, in avoidance of loop
+    isMarked.Add(num2str(parents(obs.index)), true);        % set parent as marked
+    if isMarked.ContainsKey(num2str(children(obs.index)))   % if child has been observed, in avoidance of loop
         continue;
-    elseif obs.val > INFO.COST_MAX                  % if cost too large
+    elseif obs.val > INFO.COST_MAX                          % if cost too large
         continue;
     else
         local_map = drawline(local_map, points(parents(obs.index)), points(chilredn(obs.index)));
