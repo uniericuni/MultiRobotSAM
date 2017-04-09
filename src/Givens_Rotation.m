@@ -59,4 +59,9 @@ if M == K_2             % this is observation
     d = d(1:M);         % get size M x 1
 end
 
+% rounding numbers for R 
+R = R .* 1e10;
+R = round(R);
+R = R ./ 1e10;
+
 end
