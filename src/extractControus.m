@@ -1,4 +1,15 @@
 function local_map = extractControus(observations)
+% =========================================================================
+% extracContours():
+%   connect observations to piece-wise lines local map
+%
+% inputs:
+%   observations: array contain columns of singel laser observation
+%   
+% outputs:
+%   local_map: N-by-N array contain binary state as occupancy
+%   
+% =========================================================================
 
 % initialize global variables
 global INFO;
