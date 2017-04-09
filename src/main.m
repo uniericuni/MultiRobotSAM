@@ -34,7 +34,8 @@ INFO.mapSize = 140 * 1/INFO.grid_size;  % grid map size
 INFO.robs = readData();                 % robot data
 INFO.N = length(INFO.robs);             % robot number
 INFO.COST_MAX = Inf;                    % minimum acceptable score for contour
-
+INFO.Sigma_v = 0.001;                   % velocity control uncertainty
+INFO.Sigma_omega = 0.001;               % omega control uncertainty
 % PARAM
 PARAM.map = zeros(INFO.mapSize*2+1,...  % grid map
                   INFO.mapSize*2+1,3);   
@@ -53,7 +54,6 @@ PARAM.prev_time = 0;                    % time of previous state
 % Main Loop
 % =====================
 while true
-
     % parsing controls and observation
     [rob_id, controls, observation, time] = parser();
     if size(controls,2)==0
@@ -72,19 +72,16 @@ while true
     %}
     % factorize for each period
     
-    % read control
-    u = control(t);
+    % update state
+    x = update_state( x, controls, rob_id, time );
+    % augment R for control
+    [R, d] = augument_R( R, d, x, controls, rob_id, time );
     
-    % read observation
-    z = observation(t);
-    
-    % update, augment state
-    [x,R] = update(R, controls);
-    
-    % scanmatching
-    [R,b] = scanmatch(x, map, z);
-    
+    % add the observation factors
+    scanMatching( observations, XXXX );
+   
     % optimization
-    [R,b] = optimize(R,b);
+    [R, d] = optimize( R, d, x );
+    
 end
  
