@@ -55,6 +55,36 @@ mega_controls = [];
 while true
 
     % parsing controls and observation
+    [rob_id, controls, observation] = parser();
+    if size(contorls,2)==0
+        continue;
+    end
+    
+    % augment to mega_obs, mega_control, mega_robid
+    mega_robidObs = [mega_robidObs, rob_id(end)];
+    mega_obs = [mega_obs, observation];
+    mega_robidControl = [mega_robidControl, rob_id(1,end-1)];
+    mega_controls = [mega_controls, controls];
+    % factorize for each period
+    if mod(t,UPDATE_PERIOD)==0
+        [R,d] = factorize(x, mega_robidObs, mega_obs, mega_robidControl, mega_controls);
+    end
 
+    % factorize for each period
+    
+    % read control
+    u = control(t);
+    
+    % read observation
+    z = observation(t);
+    
+    % update, augment state
+    [x,R] = update(R, controls);
+    
+    % scanmatching
+    [R,b] = scanmatch(x, map, z);
+    
+    % optimization
+    [R,b] = optimize(R,b);
 end
  
