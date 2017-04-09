@@ -54,6 +54,7 @@ mega_controls = [];
 % =====================
 c=0;
 while true
+
     c=c+1;
 
     % parsing controls and observation

@@ -45,21 +45,20 @@ PARAM.prev_time = 0;                    % time of previous state
 % initialize A,b,x
 [A, b, x] = initialize_Abx();
 
-mega_obs = [];
-mega_robidControl = [];
-mega_robidObs = [];
-mega_controls = [];
+%mega_obs = [];
+%mega_robidControl = [];
+%mega_robidObs = [];
+%mega_controls = [];
 % =====================
 % Main Loop
 % =====================
 while true
-
     % parsing controls and observation
     [rob_id, controls, observation, time] = parser();
     if size(controls,2)==0
         continue;
     end
-    
+    %{
     % augment to mega_obs, mega_control, mega_robid
     mega_robidObs = [mega_robidObs, rob_id(end)];
     mega_obs = [mega_obs, observation];
@@ -69,22 +68,19 @@ while true
     if mod(t,UPDATE_PERIOD)==0
         [R,d] = factorize(x, mega_robidObs, mega_obs, mega_robidControl, mega_controls);
     end
-
+    %}
     % factorize for each period
     
-    % read control
-    u = control(t);
+    % update state
+    x = update_state( x, controls, rob_id, time );
+    % augment R for control
+    [R, d] = augument_R( R, d, x, controls, rob_id, time );
     
-    % read observation
-    z = observation(t);
-    
-    % update, augment state
-    [x,R] = update(R, controls);
-    
-    % scanmatching
-    [R,b] = scanmatch(x, map, z);
-    
+    % add the observation factors
+    scanMatching( observations, XXXX );
+   
     % optimization
-    [R,b] = optimize(R,b);
+    [R, b] = optimize( R, b, x );
+    
 end
  
