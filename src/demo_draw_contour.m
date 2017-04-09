@@ -53,19 +53,43 @@ mega_controls = [];
 % Main Loop
 % =====================
 c=0;
+cc=0;
+xs = [];
 while true
-
+    
     c=c+1;
-
     % parsing controls and observation
-    [rob_id, controls, observation, time] = parser();   
-    if size(controls,2)==0 || c==1
+    [rob_id, controls, state, observation, time] = parser();
+    
+    if ~(size(controls,2)==0 || c==1)
+        cc = cc+1;
+        x = update_state(x,controls,rob_id, time );
+        xs = [xs, [state;rob_id(end)]];
+        pred_pose = state;
+    else
         continue;
     end
+    %}
     
-    x = update_state(x,controls,rob_id, time );
-    map = extractContours(observation, x(3*rob_id(end,1)-2:3*rob_id(end,1)));
-    PARAM.map(:,:,1) = max(map, PARAM.map(:,:,1));
-    fprintf(['iteration: ', num2str(c), '\n']);
-
+    % merge map
+    % pred_pose = xs(3*rob_id(end)-2 : 3*rob_id(end), end);
+    [n_map,map] = extractContours(observation, pred_pose);
+    %n_map = propogateGauss(n_map);
+    %map = propogateGauss(map);
+    map_temp = PARAM.map(:,:,1);
+    map_temp(n_map>0) = min(map_temp(n_map>0), -1*n_map(n_map>0));
+    map_temp(map>0) = max(map_temp(map>0), map(map>0));
+    PARAM.map(:,:,1) = map_temp;
+    
+    if mod(cc,100)==99
+        fprintf(['iteration: ', num2str(c), '\n']);
+        im = PARAM.map(:,:,1);
+        im(im>0)=1;
+        im(im<0)=-1;
+        imagesc(im);
+        pause(0.2);
+    end
+    %imagesc(PARAM.map(:,:,1));
+    %pause(0.2);
 end
+

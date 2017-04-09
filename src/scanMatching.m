@@ -18,7 +18,9 @@ function scanMatching(observations, pred_pose)
 global INFO;                            % experiment configuration, should not be updated
 global PARAM;                           % global variables, should be updated
 
-local_map = extractControus(observations);
+local_map = extractControus(observations, pred_pose);
 local_map = propogateGauss(local_map);
-[PARAM.map, delta_] = alignment(local_map, PARAM.map, pred);
+[map, delta_] = alignment(local_map, PARAM.map);
+PARAM.map(:,:,1) = PARAM.map(:,:,1) + map;
+
 
