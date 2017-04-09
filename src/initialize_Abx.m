@@ -29,6 +29,7 @@ b = zeros(3*NumofRobot*2,1);
 x = zeros(3*NumofRobot,2); 
 
 anchor = [];
+%{
 for n=1:NumofRobot
     anchorRob = [INFO.mapSize; INFO.mapSize; 0];
     anchor = [anchor; anchorRob];
@@ -39,5 +40,6 @@ for i = 1:NumofRobot
     x(3*(i-1)+1:3*(i-1)+3,1) = anchor(3*(i-1)+1:3*(i-1)+3);
     x(3*(i-1)+1:3*(i-1)+3,2) = [INFO.mapSize; INFO.mapSize; 0];
 end
+%}
 
 end

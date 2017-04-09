@@ -65,8 +65,8 @@ function [total_cost,delta_] = alignment(local_map, global_map, pred_pose)
                     X_MIN2 = -x+1;   X_MAX2 = X;
                 end
                 
-                cost = sum(sum(imabsdiff(local_map_rt(X_MIN1:X_MAX1, Y_MIN1:Y_MAX1),...
-                                         global_map(X_MIN2:X_MAX2, Y_MIN2:Y_MAX2))));
+                cost = norm(imabsdiff(local_map_rt(X_MIN1:X_MAX1, Y_MIN1:Y_MAX1),...
+                                      global_map(X_MIN2:X_MAX2, Y_MIN2:Y_MAX2)));
                 total_cost(j+6,k+6,i+181) = cost;
                                      
                 if cost<min_cost                                % minimization
