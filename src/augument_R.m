@@ -8,7 +8,7 @@ global PARAM;                           % global variables, should be updated
 [s_r,s_c] = size(state);
 last_state = state(:,s_c);
 augument_R =[];
-
+robot_id = robot_id(1:length(robot_id) - 1); %exclude obsevcation
 overall_control = zeros(3,4);
 overall_dt = zeros(1,4);
 %combine control
