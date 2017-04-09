@@ -45,7 +45,7 @@ PARAM.prev_time = 0;                    % time of previous state
 
 % initialize A,b,x
 [A, b, x] = initialize_Abx();
-
+[R,d] = sparse_factorization(A,b);
 %mega_obs = [];
 %mega_robidControl = [];
 %mega_robidObs = [];
