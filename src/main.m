@@ -80,7 +80,7 @@ while true
     scanMatching( observations, XXXX );
    
     % optimization
-    [R, b] = optimize( R, b, x );
+    [R, d] = optimize( R, d, x );
     
 end
  
