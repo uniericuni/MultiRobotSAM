@@ -39,6 +39,10 @@ INFO.GLOBAL_BUFF_SIZE = 500;            % buffer size for global map history
 % PARAM
 PARAM.map = zeros(INFO.mapSize*2+1,...  % grid map
                   INFO.mapSize*2+1);
+PARAM.local_buff = struct();
+PARAM.local_buff.map = PARAM.map(:,:);  % create local buffer
+PARAM.local_buff.pose_col = 0;
+PARAM.local_buff.robot_id = 0;
 PARAM.buff_size = 0;
 PARAM.obs_buff = ...                    % observer to map buffer
             cell(INFO.GLOBAL_BUFF_SIZE);
@@ -57,18 +61,17 @@ mega_controls = [];
 % =====================
 % Main Loop
 % =====================
-c=0;
-motion_counter=0;
-motion_cycle=INFO.LOCAL_BUFF_SIZE;
+c = 0;
+cc = 0;
 xs = [];
 while true
     
-    c=c+1;
+    c = c+1;
     % parsing controls and observation
     [rob_id, controls, pred_pose, observation, time] = parser();
     
     if ~(size(controls,2)==0)
-        moition_counter = motion_counter + 1;
+        cc = cc+1;
         x = update_state(x,controls,rob_id, time );
         xs = [xs, [pred_pose;rob_id(end)]];
     else
@@ -76,9 +79,13 @@ while true
     end
     
     % merge map 
-    map_obs = extractNewMap(observation, pred_pose, size(x,2), rob_id(end));
-    releaseBuffer(map_obs);
-    
+    extractNewMap(observation, pred_pose, size(x,2), rob_id(end));
+    if mod(cc, 100)==99
+        imagesc(PARAM.local_buff.map);
+        pause(0.2);
+        [R,d] = releaseBuffer(R,d);
+        fprintf(['\niteration: ', num2str(c)]);
+    end
     %imagesc(PARAM.map(:,:,1));
     %pause(0.2);
 end
