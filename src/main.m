@@ -36,6 +36,8 @@ INFO.N = length(INFO.robs);             % robot number
 INFO.COST_MAX = Inf;                    % minimum acceptable score for contour
 INFO.Sigma_v = 0.001;                   % velocity control uncertainty
 INFO.Sigma_omega = 0.001;               % omega control uncertainty
+INFO.Q = diag([0.001,0.001,0.1/180*pi].^2); % Observation covariance
+INFO.Default_var = 1e-5;             % Prevent Singularity
 % PARAM
 PARAM.map = zeros(INFO.mapSize*2+1,...  % grid map
                   INFO.mapSize*2+1,3);   
@@ -77,7 +79,7 @@ while true
     % augment R for control
     [R, d] = augument_R( R, d, x, controls, rob_id, time );
     
-    %continue;
+    continue;
     % add the observation factors
     scanMatching( observations, XXXX );
    
