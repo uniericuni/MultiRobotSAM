@@ -44,6 +44,18 @@ for i = 1:length(unique_id)
     
     Q =  Vt*M*Vt';
     
+    if Q(1,1) == 0
+        Q(1,1) = INFO.Default_var;
+    end
+    
+    if Q(2,2) == 0
+        Q(2,2) = INFO.Default_var;
+    end
+    
+    if Q(3,3) == 0
+        Q(3,3) = INFO.Default_var;
+    end
+    
     w = inv((Q')^0.5);
     augument_R(3*id-2:3*id,3*id-2:3*id) = w*Gt;
     augument_I(3*id-2:3*id,3*id-2:3*id) = -w*eye(3);
