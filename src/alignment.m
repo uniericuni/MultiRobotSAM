@@ -18,8 +18,9 @@ function [delta_] = alignment(l_map, g_map)
     % global initiate
     global PARAM;
     global INFO;
-        
+    
     % proccessed to piecewise line walls
+    %{
     l_map(l_map>0) = 1; l_map(l_map<0) = -1;
     g_map(g_map>0) = 1; g_map(g_map<0) = -1;
     hp = [0, -1/4, 0; -1/4, 2, -1/4; 0, -1/4, 0];
@@ -27,8 +28,32 @@ function [delta_] = alignment(l_map, g_map)
     g_map = conv2(g_map, hp, 'same');
     l_map(l_map>0) = 1; l_map(l_map<0) = -1;
     g_map(g_map>0) = 1; g_map(g_map<0) = -1;
-    global_map = g_map;
-    local_map = l_map;
+    g_map = g_map;
+    l_map = l_map;
+    %}
+    % search for bounding box
+    for x_min=1:size(l_map,2)
+        if nnz(g_map(:,x_min))~=0 || nnz(l_map(:,x_min))~=0
+            break;
+        end
+    end
+    for x_max=size(l_map,2):-1:1
+        if nnz(g_map(:,x_max))~=0 || nnz(l_map(:,x_max))~=0
+            break;
+        end
+    end
+    for y_min=1:size(l_map,1)
+        if nnz(g_map(y_min,:))~=0 || nnz(l_map(y_min,:))~=0
+            break;
+        end
+    end
+    for y_max=size(l_map,1):-1:1
+        if nnz(g_map(y_max,:))~=0 || nnz(l_map(y_max,:))~=0
+            break;
+        end
+    end
+    local_map = l_map(y_min:y_max,x_min:x_max);
+    global_map = g_map(y_min:y_max,x_min:x_max);
     
     % specify warping output field
     [X,Y] = size(local_map);
@@ -41,27 +66,20 @@ function [delta_] = alignment(l_map, g_map)
     delta_ = [];
     min_cost = Inf;
     for i=-90:1:90                                          % rotation
-        
+
         % rotation around center and crop to original size
         theta = deg2rad(i);
-        t = [ cos(theta), -sin(theta), 0;
-             sin(theta), cos(theta), 0;
+        t = [ cos(theta), sin(theta), 0;
+             -sin(theta), cos(theta), 0;
                        0,          0, 1];
         tform = affine2d(t');
-        local_map_r = imwarp(local_map, Rin, tform, 'OutPutView', Rin);
-        
+        local_map_rt = imwarp(local_map, Rin, tform, 'OutPutView', Rin);
+        costs = [];
         for j=-8:2:8                                            % x translation
             for k=-8:2:8                                        % y translation
                 
-                x = j+pred_pose(1);
-                y = -1*(k+pred_pose(2));
-                %{
-                t = [ 1, 0, j+pred_pose(1);
-                      0, 1, k+pred_pose(2);
-                      0, 0, 1];
-                tform = affine2d(t');
-                local_map_rt = imwarp(local_map_r, Rin, tform, 'OutPutView', Rin);
-                %}
+                x = j;
+                y = -k;
                 
                 if y>=0
                     Y_MIN1 = y+1; Y_MAX1 = Y; 
@@ -80,23 +98,24 @@ function [delta_] = alignment(l_map, g_map)
                 
                 cost = norm(imabsdiff(local_map_rt(X_MIN1:X_MAX1, Y_MIN1:Y_MAX1),...
                                       global_map(X_MIN2:X_MAX2, Y_MIN2:Y_MAX2)));
-                total_cost(j+6,k+6,i+181) = cost;
+                costs = [costs, cost];
+                %total_cost(j+6,k+6,i+181) = cost;
                                      
                 if cost<min_cost                                % minimization
                     min_cost = cost;
-                    delta_ = [i;j;k];
+                    delta_ = [i;j;-k];
                 end
 
             end
         end
         
-        % transform to align
-        %{
-        theta = deg2rad(delta_(1));
-        t = [ cos(theta), -sin(theta), delta_(2)+pred_pose(1);
-              sin(theta), cos(theta),  delta_(3)+pred_pose(2);
-                       0,          0,                       1];
-        tform = affine2d(t');
-        map = imwarp(local_map, Rin, tform, 'OutPutView', Rin);
-        %}
     end
+    %{
+    % convert local solution to global
+    V = [-INFO.mapSize; INFO.mapSize] + [(x_min+x_max)/2; -(y_min+y_max)/2];
+    V_delta = -delta_(2:3,:);
+    theta_delta = -deg2rad(delta_(1));
+    R = [cos(theta_delta), -sin(theta_delta);
+         sin(theta_delta),  cos(theta_delta)];
+    V-V_delta- R*V;
+    %}

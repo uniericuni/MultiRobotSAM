@@ -4,29 +4,23 @@ function [R,d] = releaseBuffer(R,d)
 global PARAM;
 global INFO;
 
-% scanmatching
-%{
 for i=1:PARAM.buff_size
     
     % if the local map overlapped
     l_map = PARAM.local_buff.map;
     g_map = PARAM.obs_buff{PARAM.buff_size}.map;
     mex = l_map .* g_map;
-    if sum(sum(mex(mex~=0))) > 20
+    if nnz(mex) > 10000
         delta_ = alignment(l_map, g_map);
-            ...R,d,col_id,rob_id,c)
         [R,d] = augument_R_obs( R,...
                                 d,...
                                [PARAM.local_buff.pose_col, ...
                                 PARAM.obs_buff{PARAM.buff_size}.pose_col], ...
                                [PARAM.local_buff.robot_id, ...
-                                PARAM.obs_buff{PARAM.buff_size}.robot_id]);
+                                PARAM.obs_buff{PARAM.buff_size}.robot_id] );
     end
     
 end
-%}
-% merge global map
-
 
 % push local buffer to global buffer
 PARAM.buff_size = PARAM.buff_size+1;
