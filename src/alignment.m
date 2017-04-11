@@ -20,7 +20,7 @@ function [delta_] = alignment(l_map, g_map)
     global INFO;
     
     % proccessed to piecewise line walls
-    %{
+    
     l_map(l_map>0) = 1; l_map(l_map<0) = -1;
     g_map(g_map>0) = 1; g_map(g_map<0) = -1;
     hp = [0, -1/4, 0; -1/4, 2, -1/4; 0, -1/4, 0];
@@ -30,7 +30,7 @@ function [delta_] = alignment(l_map, g_map)
     g_map(g_map>0) = 1; g_map(g_map<0) = -1;
     g_map = g_map;
     l_map = l_map;
-    %}
+    
     % search for bounding box
     for x_min=1:size(l_map,2)
         if nnz(g_map(:,x_min))~=0 || nnz(l_map(:,x_min))~=0

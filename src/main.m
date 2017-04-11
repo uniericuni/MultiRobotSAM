@@ -78,7 +78,7 @@ while true
     if ~(size(controls,2)==0 )
         cc = cc+1;
         x = update_state(x,controls,rob_id, time );
-        % xs = [xs, [pred_pose;rob_id(end)]];
+        xs = [xs, x];
     else
         continue;
     end
@@ -104,14 +104,20 @@ while true
     % merge map 
     extractNewMap(observation, pred_pose, size(x,2), rob_id(end));
     if mod(cc, 100)==99
-        imagesc(PARAM.local_buff.map);
-        pause(0.2);
+        %imagesc(PARAM.local_buff.map);
+        %pause(0.2);
         [R,d] = releaseBuffer(R,d);
         fprintf(['\niteration: ', num2str(c)]);
         
         % optimization
         x = optimize( R, d, x );
+        
+        % cache current record
+        temp_map = PARAM.map;
+        temp_buff = PARAM.obs_buff;
+        save('cache.mat', 'xs', 'temp_map', 'temp_buff');
     end
     
 end
+%% 
  
