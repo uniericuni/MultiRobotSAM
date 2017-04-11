@@ -56,7 +56,7 @@ isMarked = HashTable(o_num);
 
 if o_num~=0
     
-    point = points(:,:,1);
+    point = points(:,1);
     isMarked.Add(num2str(1), true);
     while ~isMarked.Count()<o_num
     

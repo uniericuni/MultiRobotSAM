@@ -30,7 +30,6 @@ d = [d;lamda];  % (M+K) x 1
 for i = 1:size(R,2)             % columns
     for j = M+K:-1:max(M+1,i+1) % rows
         if R(j,i) ~= 0
-            R
             beta = R(j,i);  % a_ik::need to become zero
             alpha = R(i,i); % a_kk::the diagonal element 
             if abs(beta) > abs(alpha)
