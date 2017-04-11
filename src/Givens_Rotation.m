@@ -33,6 +33,9 @@ R = sparse(R);
 if size(R,1) == size(R,2)
     for r = M+1:M+K % rows::constant time because K is constant every time
         ind = find(R(r,:)); % ind contains the col number of nonzero values
+        if length(ind)==0
+            continue;
+        end
         while ind(1) < r
             c = ind(1); % the column number 
             
@@ -64,6 +67,9 @@ if size(R,1) == size(R,2)
             R = R ./ 1e12;
             % get the new indices
             ind = find(R(r,:)); 
+            if length(ind)==0
+                break;
+            end
         end
     end
     

@@ -38,7 +38,6 @@ for i=1:o_num
     end
 
 end
-
 % mark negative points
 
 for i=1:length(neg_points)
