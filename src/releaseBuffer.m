@@ -23,9 +23,7 @@ for i=1:PARAM.buff_size
 end
 
 % merge with global map
-l_map = PARAM.local_buff.map;
-PARAM.map(l_map>0) = max(PARAM.map(l_map>0), l_map(l_map>0));
-PARAM.map(l_map<0) = min(PARAM.map(l_map<0), l_map(l_map<0));
+PARAM.map = PARAM.map + PARAM.local_buff.map;
 
 % push local buffer to global buffer
 PARAM.buff_size = PARAM.buff_size+1;

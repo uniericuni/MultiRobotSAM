@@ -39,6 +39,7 @@ if size(R,1) == size(R,2)
             % calculate Givens matrix
             beta = R(r,c);  % a_ik::need to become zero
             alpha = R(c,c); % a_kk::the diagonal element
+
             if abs(beta) > abs(alpha)
                 CosPhi = alpha/(beta*(sqrt(1+(alpha/beta)^2)));
                 SinPhi = 1/sqrt(1+(alpha/beta)^2);

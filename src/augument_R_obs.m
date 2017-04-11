@@ -28,6 +28,7 @@ augument_R(1:3,12*c_i-12+3*r_i-2:12*c_i-12+3*r_i)=w*Hi;%observation
 augument_R(1:3,12*c_j-12+3*r_j-2:12*c_j-12+3*r_j)=w*Hj;
 lamda = w*c;
 [R, d] = Givens_Rotation(R, d, augument_R, lamda);
+R = sparse(R);
 
 end
 
