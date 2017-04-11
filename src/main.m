@@ -74,10 +74,10 @@ while true
     % parsing controls and observation
     c = c+1;
     [rob_id, controls, pred_pose, observation, time] = parser();
-    if ~(size(controls,2)==0)
+    if ~(size(controls,2)==0 )
         cc = cc+1;
         x = update_state(x,controls,rob_id, time );
-        xs = [xs, [pred_pose;rob_id(end)]];
+        % xs = [xs, [pred_pose;rob_id(end)]];
     else
         continue;
     end
@@ -96,9 +96,6 @@ while true
 
     % factorize for each period
     
-    % update state
-    x = update_state( x, controls, rob_id, time );
-
     % augment R for control
     [R, d] = augument_R( R, d, x, controls, rob_id, time );
     
@@ -109,10 +106,10 @@ while true
         pause(0.2);
         [R,d] = releaseBuffer(R,d);
         fprintf(['\niteration: ', num2str(c)]);
+        
+        % optimization
+        x = optimize( R, d, x );
     end
-   
-    % optimization
-    [R, d] = optimize( R, d, x );
     
 end
  

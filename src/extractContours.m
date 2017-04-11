@@ -77,10 +77,10 @@ if o_num~=0
         
         end
     
-        if min_dist <= INFO.COST_MAX
+        if min_id==0
+            break;
+        elseif min_dist <= INFO.COST_MAX
             local_map = drawline(local_map, point, points(:,min_id), 1);
-        elseif min_id==0
-            break
         end
     
         point = points(:,min_id);
