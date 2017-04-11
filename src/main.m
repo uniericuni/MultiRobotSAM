@@ -98,6 +98,7 @@ while true
     % factorize for each period
     
     % augment R for control
+    %R = sparse(R);
     [R, d] = augument_R( R, d, x, controls, rob_id, time );
     
     % merge map 

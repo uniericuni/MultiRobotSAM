@@ -64,8 +64,9 @@ end
 [R_r,R_c] = size(R);
 augument_R = [zeros(12,R_c-12),augument_R,augument_I];
 lamda = zeros(12,1);
-
+R = sparse(R);
 [R, d] = Givens_Rotation(R, d, augument_R, lamda);
+R = sparse(R);
 
 end
 
