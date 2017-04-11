@@ -27,11 +27,12 @@ end
 d = [d;lamda];  % (M+K) x 1
 %% Start rrotation
 % start to do Givens Rotation, for every entry in the newly added matrix
-for i = 1:M             % columns
-    for j = M+K:-1:i+1  % rows
+for i = 1:size(R,2)             % columns
+    for j = M+K:-1:max(M+1,i+1) % rows
         if R(j,i) ~= 0
+            R
             beta = R(j,i);  % a_ik::need to become zero
-            alpha = R(j-1,i); % a_kk::the diagonal element 
+            alpha = R(i,i); % a_kk::the diagonal element 
             if abs(beta) > abs(alpha)
                 CosPhi = alpha/(beta*(sqrt(1+(alpha/beta)^2)));
                 SinPhi = 1/sqrt(1+(alpha/beta)^2);
@@ -41,10 +42,10 @@ for i = 1:M             % columns
             end
             % fill in Givens
             Givens = eye(M+K,M+K); % size (M+K) x (M+K)
-            Givens(j-1,j-1) = CosPhi;
+            Givens(i,i) = CosPhi;
             Givens(j,j) = CosPhi;
-            Givens(j-1,j) = SinPhi;
-            Givens(j,j-1) = -SinPhi;
+            Givens(i,j) = SinPhi;
+            Givens(j,i) = -SinPhi;
             % apply Givens Rotation to R
             R = Givens * R; 
             % apply Givens Rotation to d
