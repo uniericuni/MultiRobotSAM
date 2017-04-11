@@ -1,4 +1,8 @@
 *.pdf
+*.ai
+*.ppt
+*.pptx
+*.zip
 *.png
 *.jpg
 *.mat

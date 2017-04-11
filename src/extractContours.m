@@ -41,7 +41,7 @@ end
 % mark negative points
 
 for i=1:length(neg_points)
-    neg_local_map = drawline(neg_local_map, neg_points(:,i), pred_pose(1:2), 1);
+    neg_local_map = drawline(neg_local_map, neg_points(:,i), pred_pose(1:2), 0.2);
 end
 
 % iteratively update contours
