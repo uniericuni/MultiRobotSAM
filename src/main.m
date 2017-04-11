@@ -33,7 +33,8 @@ INFO.grid_size = 0.2;                   % gird size for grid map
 INFO.mapSize = 140 * 1/INFO.grid_size;  % grid map size
 INFO.robs = readData();                 % robot data
 INFO.N = length(INFO.robs);             % robot number
-INFO.COST_MAX = Inf;                    % minimum acceptable score for contour
+INFO.COST_MAX = INFO.grid_size*20;      % minimum acceptable score for contour
+INFO.GLOBAL_BUFF_SIZE = 500;            % buffer size for global map history
 INFO.Sigma_v = 0.001;                   % velocity control uncertainty
 INFO.Sigma_omega = 0.001;               % omega control uncertainty
 INFO.Q = diag([0.001,0.001,0.1/180*pi].^2); % Observation covariance
@@ -97,7 +98,7 @@ while true
     % factorize for each period
     
     % augment R for control
-    [R, d] = augument_R( R, d, x, controls, rob_id, time );
+    %[R, d] = augument_R( R, d, x, controls, rob_id, time );
     
     % merge map 
     extractNewMap(observation, pred_pose, size(x,2), rob_id(end));
@@ -108,7 +109,7 @@ while true
         fprintf(['\niteration: ', num2str(c)]);
         
         % optimization
-        x = optimize( R, d, x );
+        %x = optimize( R, d, x );
     end
     
 end
