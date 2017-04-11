@@ -98,7 +98,7 @@ while true
     % factorize for each period
     
     % augment R for control
-    %[R, d] = augument_R( R, d, x, controls, rob_id, time );
+    [R, d] = augument_R( R, d, x, controls, rob_id, time );
     
     % merge map 
     extractNewMap(observation, pred_pose, size(x,2), rob_id(end));
@@ -109,7 +109,7 @@ while true
         fprintf(['\niteration: ', num2str(c)]);
         
         % optimization
-        %x = optimize( R, d, x );
+        x = optimize( R, d, x );
     end
     
 end
