@@ -1,4 +1,4 @@
-function [robs_id, controls, state, observations, time] = parser()
+function [robs_id, controls, poses, state, observations, time] = parser()
 % =========================================================================
 % parser()
 %   parsing all control commands before one observatoin
@@ -21,6 +21,7 @@ laser_id = PARAM.laser_id;
 
 % initialize local variables
 robs_id = [];
+poses = [];
 controls = [];
 observations = [];
 states = [];
@@ -33,7 +34,6 @@ while ~observed
     min_t = Inf;
     min_rob = 0;
     
-    % TODO: adopt priority queue
     % update priority queue
     for n=1:N*2
         
@@ -60,12 +60,14 @@ while ~observed
         % parse id and poses
         rob_id = min_rob/2;
         pose = robs{rob_id}.pose{pose_id(rob_id)};
+        poses = [poses, pose_id];
         if pose_id(rob_id)>1
             prev_pose = robs{rob_id}.pose{pose_id(rob_id)-1};
         else
             prev_pose =  robs{rob_id}.pose{pose_id(rob_id)};
         end
         pose_id(rob_id) = pose_id(rob_id)+1;
+        
         
         % detemine control
         control = [ sqrt((pose.x-prev_pose.x)^2+...
@@ -80,6 +82,7 @@ while ~observed
             controls = [controls, control./time(end)];
             PARAM.prev_time(1,rob_id) = pose.time;
         end
+
     else
 
         % parse id and poses
@@ -100,7 +103,7 @@ while ~observed
         observed = true;
 
     end
-
+    
 end
 
 % update control/observation index

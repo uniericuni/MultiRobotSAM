@@ -74,13 +74,14 @@ while true
     
     % parsing controls and observation
     c = c+1;
-    [rob_id, controls, pred_pose, observation, time] = parser();
+    [rob_id, controls, poses, pred_pose, observation, time] = parser();
     if ~(size(controls,2)==0 )
         cc = cc+1;
         x = update_state(x,controls,rob_id, time );
     else
         continue;
     end
+    
     %{
     % merge map
     extractNewMap(observation, pred_pose, size(x,2), rob_id(end));
