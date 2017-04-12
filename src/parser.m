@@ -88,7 +88,6 @@ while ~observed
         % determine state
         pose = robs{rob_id}.pose{pose_id(rob_id)};
         state = [pose.x; pose.y; pose.theta];
-        % states = [states, state];
         
         % detemine observation
         lasers = robs{rob_id}.laser{laser_id(rob_id)};
