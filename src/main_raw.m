@@ -78,11 +78,10 @@ while true
     if ~(size(controls,2)==0 )
         cc = cc+1;
         x = update_state(x,controls,rob_id, time );
-        xs = [xs, x];
     else
         continue;
     end
-    
+    %{
     % merge map
     extractNewMap(observation, pred_pose, size(x,2), rob_id(end));
     if mod(cc, 100)==99
@@ -114,7 +113,7 @@ while true
         
         % cache current record
         temp_buff = PARAM.obs_buff;
-        save('cache.mat', 'xs', ''temp_buff');
+        save('cache.mat', 'x', 'temp_buff');
     end
-    
+    %}
 end

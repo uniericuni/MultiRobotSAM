@@ -66,8 +66,6 @@ while ~observed
         control = [pose.vel_x; pose.vel_y; pose.vel_theta];
         if control(1)==0 && control(2)==0 && control(3)==0      % zeros pruning
             PARAM.prev_time(1,rob_id) = pose.time;
-            PARAM.prev_pose(:,rob_id) = [pose.x; pose.y; pose.theta];
-            continue;
         else
             robs_id = [robs_id,rob_id];
             time = [time, pose.time - PARAM.prev_time(1,rob_id)];
@@ -76,9 +74,8 @@ while ~observed
                         (pose.theta-PARAM.prev_pose(3,rob_id))./time(end) ];
             controls = [controls, control];
             PARAM.prev_time(1,rob_id) = pose.time;
-            PARAM.prev_pose(:,rob_id) = [pose.x; pose.y; pose.theta];
         end
-
+        PARAM.prev_pose(:,rob_id) = [pose.x; pose.y; pose.theta];
     else
 
         % parse id and poses
