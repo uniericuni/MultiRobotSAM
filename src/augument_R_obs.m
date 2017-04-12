@@ -30,9 +30,5 @@ lamda = w*c;
 R = sparse(R);
 [R, d] = Givens_Rotation(R, d, augument_R, lamda);
 R = sparse(R);
-<<<<<<< HEAD
-=======
-
->>>>>>> 47f8231077e1581f9085d64371a6c7a03fe0aee5
 end
 

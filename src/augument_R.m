@@ -33,11 +33,11 @@ for i = 1:length(unique_id)
     dt = overall_dt(id);
     
     
-    Gt = [ 1, 0, -v*sin(theta + dt*omega);
-        0, 1,  v*cos(theta + dt*omega);
+    Gt = [ 1, 0, -dt*v*sin(theta + dt*omega);
+        0, 1,  dt*v*cos(theta + dt*omega);
         0, 0,                        1];
-    Vt = [ cos(theta + dt*omega), -dt*v*sin(theta + dt*omega);
-        sin(theta + dt*omega),  dt*v*cos(theta + dt*omega);
+    Vt = [ dt*cos(theta + dt*omega), -dt^2*v*sin(theta + dt*omega);
+        dt*sin(theta + dt*omega),  dt^2*v*cos(theta + dt*omega);
         0,                          dt];
     
     
