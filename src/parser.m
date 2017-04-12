@@ -65,10 +65,11 @@ while ~observed
         else
             prev_pose =  robs{rob_id}.pose{pose_id(rob_id)};
         end
-        pose_id(rob_id) = pose_id(rob_id)+1;
-        poses = [poses, pose_id];
         time = [time,...
                 robs{rob_id}.pose{pose_id(rob_id)+1}.time-robs{rob_id}.pose{pose_id(rob_id)}.time];
+        
+        pose_id(rob_id) = pose_id(rob_id)+1;
+        poses = [poses, pose_id];
         
         % detemine control
         control = [ sqrt((pose.x-prev_pose.x)^2+...
