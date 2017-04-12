@@ -113,9 +113,9 @@ while true
         x = optimize( R, d, x );
         
         % cache current record
-        temp_map = PARAM.map;
-        temp_buff = PARAM.obs_buff;
-        save('cache.mat', 'xs', 'temp_map', 'temp_buff');
+     %   temp_map = PARAM.map;
+     %   temp_buff = PARAM.obs_buff;
+     %   save('cache.mat', 'xs', 'temp_map', 'temp_buff');
     end
     
 end
