@@ -60,22 +60,26 @@ while ~observed
         % parse id and poses
         rob_id = min_rob/2;
         pose = robs{rob_id}.pose{pose_id(rob_id)};
+        if pose_id(rob_id)>1
+            prev_pose = robs{rob_id}.pose{pose_id(rob_id)-1};
+        else
+            prev_pose =  robs{rob_id}.pose{pose_id(rob_id)};
+        end
         pose_id(rob_id) = pose_id(rob_id)+1;
-
+        
         % detemine control
-        control = [pose.vel_x; pose.vel_y; pose.vel_theta];
-        if control(1)==0 && control(2)==0 && control(3)==0      % zeros pruning
+        control = [ sqrt((pose.x-prev_pose.x)^2+...
+                        (pose.y-prev_pose.y)^2);...
+                        (pose.theta-prev_pose.theta) ];
+        
+        if control(1)==0 && control(2)==0  % zeros pruning
             PARAM.prev_time(1,rob_id) = pose.time;
         else
             robs_id = [robs_id,rob_id];
             time = [time, pose.time - PARAM.prev_time(1,rob_id)];
-            control = [ sqrt((pose.x-PARAM.prev_pose(1,rob_id))^2+...
-                        (pose.y-PARAM.prev_pose(2,rob_id))^2)./time(end);...
-                        (pose.theta-PARAM.prev_pose(3,rob_id))./time(end) ];
-            controls = [controls, control];
+            controls = [controls, control./time(end)];
             PARAM.prev_time(1,rob_id) = pose.time;
         end
-        PARAM.prev_pose(:,rob_id) = [pose.x; pose.y; pose.theta];
     else
 
         % parse id and poses
