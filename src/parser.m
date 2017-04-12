@@ -60,14 +60,15 @@ while ~observed
         % parse id and poses
         rob_id = min_rob/2;
         pose = robs{rob_id}.pose{pose_id(rob_id)};
-        poses = [poses, pose_id];
         if pose_id(rob_id)>1
             prev_pose = robs{rob_id}.pose{pose_id(rob_id)-1};
         else
             prev_pose =  robs{rob_id}.pose{pose_id(rob_id)};
         end
         pose_id(rob_id) = pose_id(rob_id)+1;
-        
+        poses = [poses, pose_id];
+        time = [time,...
+                robs{rob_id}.pose{pose_id(rob_id)+1}.time-robs{rob_id}.pose{pose_id(rob_id)}.time];
         
         % detemine control
         control = [ sqrt((pose.x-prev_pose.x)^2+...
@@ -75,12 +76,12 @@ while ~observed
                         (pose.theta-prev_pose.theta) ];
         
         if control(1)==0 && control(2)==0  % zeros pruning
-            PARAM.prev_time(1,rob_id) = pose.time;
+            %PARAM.prev_time(1,rob_id) = pose.time;
         else
             robs_id = [robs_id,rob_id];
-            time = [time, pose.time - PARAM.prev_time(1,rob_id)];
+            %time = [time, pose.time - PARAM.prev_time(1,rob_id)];
             controls = [controls, control./time(end)];
-            PARAM.prev_time(1,rob_id) = pose.time;
+            %PARAM.prev_time(1,rob_id) = pose.time;
         end
 
     else

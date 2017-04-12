@@ -1,4 +1,4 @@
-function x = velocity_transition( x_i,k,i,dt)
+function state = velocity_transition( x_i,k,i,dt)
 %velocity_TRANSITION propagates the given state x_i according to the controls
 % u = (vel_y; vel_x; vel_theta)
 % x = (x;y;theta)
@@ -29,7 +29,7 @@ dtheta =  INFO.robs{k}.pose{i+1}.theta - INFO.robs{k}.pose{i}.theta;
 
 x = x_i(1) + dx;
 y = x_i(2) + dy;
-theta = minimizedAngle(theta + dtheta);
-
+theta = minimizedAngle(x_i(3) + dtheta);
+state = [x;y;theta];
 end
 

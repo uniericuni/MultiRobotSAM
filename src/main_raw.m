@@ -77,7 +77,7 @@ while true
     [rob_id, controls, poses, pred_pose, observation, time] = parser();
     if ~(size(controls,2)==0 )
         cc = cc+1;
-        x = update_state(x,controls,rob_id, time );
+        x = update_state(x,poses,rob_id, time );
     else
         continue;
     end
