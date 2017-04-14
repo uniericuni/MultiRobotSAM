@@ -71,14 +71,17 @@ while ~observed
         %         else
         
         dt = pose.time - PARAM.prev_time(1,rob_id);
-        control = [ sqrt((pose.x-PARAM.prev_pose(1,rob_id))^2+...
-            (pose.y-PARAM.prev_pose(2,rob_id))^2)./dt;...
-            (pose.theta-PARAM.prev_pose(3,rob_id))./dt ];
-        if control(1) == 0 && control(2) == 0
+        control = [ pose.x-PARAM.prev_pose(1,rob_id);
+                    pose.y-PARAM.prev_pose(2,rob_id);
+                    pose.theta-PARAM.prev_pose(3,rob_id)];
+        if control(1) == 0 && control(2) == 0 && control(3) == 0
             PARAM.prev_time(1,rob_id) = pose.time;
             PARAM.prev_pose(:,rob_id) = [pose.x; pose.y; pose.theta];
             continue;
         else
+            control(1) = control(1) + rand/1000;
+            control(2) = control(2) + rand/1000;
+            control(3) = control(3) + rand/1000;
             robs_id = [robs_id,rob_id];
             time = [time, dt];
             controls = [controls, control];

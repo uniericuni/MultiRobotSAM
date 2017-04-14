@@ -22,7 +22,7 @@
 close all;
 clear;
 clc;
-
+tic
 % Initialize globals
 global INFO;                            % experiment configuration, should not be updated
 global PARAM;                           % global variables, should be updated
@@ -78,7 +78,7 @@ while true
     if ~(size(controls,2)==0 )
         cc = cc+1;
         x = update_state(x,controls,rob_id, time );
-        xs = [xs, x];
+        %xs = [xs, x];
     else
         continue;
     end
@@ -118,6 +118,12 @@ while true
         %   save('cache.mat', 'xs', 'temp_map', 'temp_buff');
     end
     
+    if (c == 110000)
+        break;
+    end
+    
 end
+save('cache.mat','s','PARAM.map','PARAM.obs_buff');
+toc
 %%
 
