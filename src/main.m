@@ -22,7 +22,7 @@
 close all;
 clear;
 clc;
-
+tic
 % Initialize globals
 global INFO;                            % experiment configuration, should not be updated
 global PARAM;                           % global variables, should be updated
@@ -42,14 +42,14 @@ INFO.Default_var = 1e-5;             % Prevent Singularity
 
 % PARAM
 PARAM.map = zeros(INFO.mapSize*2+1,...  % grid map
-                  INFO.mapSize*2+1);
+    INFO.mapSize*2+1);
 PARAM.local_buff = struct();
 PARAM.local_buff.map = PARAM.map(:,:);  % create local buffer
 PARAM.local_buff.pose_col = 0;
 PARAM.local_buff.robot_id = 0;
 PARAM.buff_size = 0;
 PARAM.obs_buff = ...                    % observer to map buffer
-            cell(INFO.GLOBAL_BUFF_SIZE);
+    cell(INFO.GLOBAL_BUFF_SIZE);
 PARAM.pose_id = ones(1,INFO.N);         % current pose id for each robot
 PARAM.laser_id = ones(1,INFO.N);        % current laser(sensor) id for each robot
 PARAM.prev_time = zeros(1,INFO.N);      % time of previous state
@@ -71,18 +71,18 @@ c = 0;
 cc = 0;
 xs = [];
 while true
-
+    
     % parsing controls and observation
     c = c+1;
     [rob_id, controls, pred_pose, observation, time] = parser();
     if ~(size(controls,2)==0 )
         cc = cc+1;
         x = update_state(x,controls,rob_id, time );
-        xs = [xs, x];
+        %xs = [xs, x];
     else
         continue;
     end
-
+    
     %{
     % augment to mega_obs, mega_control, mega_robid
     mega_robidObs = [mega_robidObs, rob_id(end)];
@@ -94,14 +94,14 @@ while true
         [R,d] = factorize(x, mega_robidObs, mega_obs, mega_robidControl, mega_controls);
     end
     %}
-
+    
     % factorize for each period
     
     % augment R for control
-    %R = sparse(R);
+    R = sparse(R);
     [R, d] = augument_R( R, d, x, controls, rob_id, time );
     
-    % merge map 
+    % merge map
     extractNewMap(observation, pred_pose, size(x,2), rob_id(end));
     if mod(cc, 100)==99
         %imagesc(PARAM.local_buff.map);
@@ -113,11 +113,17 @@ while true
         x = optimize( R, d, x );
         
         % cache current record
-        temp_map = PARAM.map;
-        temp_buff = PARAM.obs_buff;
-        save('cache.mat', 'xs', 'temp_map', 'temp_buff');
+        %   temp_map = PARAM.map;
+        %   temp_buff = PARAM.obs_buff;
+        %   save('cache.mat', 'xs', 'temp_map', 'temp_buff');
+    end
+    
+    if (c == 110000)
+        break;
     end
     
 end
-%% 
- 
+save('cache.mat','s','PARAM.map','PARAM.obs_buff');
+toc
+%%
+

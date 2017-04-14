@@ -8,11 +8,11 @@ next_state = state(:,s_c);
 
 [c_r,c_c] = size(control);
 
-for i = 1:length(c_c)
+for i = 1:c_c
     id = robot_id(i);
     robot_state = next_state(3*id-2:3*id);
     robot_control = control(:,i);
-    robot_state = velocity_transition(robot_state,id,robot_control,delta_time(i));
+    robot_state = velocity_transition(robot_state,robot_control,delta_time(i));
     next_state(3*id-2) = robot_state(1);
     next_state(3*id-1) = robot_state(2);
     next_state(3*id) = robot_state(3); 

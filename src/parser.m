@@ -1,4 +1,4 @@
-function [robs_id, controls, poses, state, observations, time] = parser()
+function [robs_id, controls, state, observations, time] = parser()
 % =========================================================================
 % parser()
 %   parsing all control commands before one observatoin
@@ -21,7 +21,6 @@ laser_id = PARAM.laser_id;
 
 % initialize local variables
 robs_id = [];
-poses = [];
 controls = [];
 observations = [];
 states = [];
@@ -34,6 +33,7 @@ while ~observed
     min_t = Inf;
     min_rob = 0;
     
+    % TODO: adopt priority queue
     % update priority queue
     for n=1:N*2
         
@@ -51,49 +51,56 @@ while ~observed
             min_t = t;
             min_rob = n;
         end
-
+        
     end
     
     % update control/observation queue
     if mod(min_rob,2)==0
-
+        
         % parse id and poses
         rob_id = min_rob/2;
         pose = robs{rob_id}.pose{pose_id(rob_id)};
-        if pose_id(rob_id)>1
-            prev_pose = robs{rob_id}.pose{pose_id(rob_id)-1};
-        else
-            prev_pose =  robs{rob_id}.pose{pose_id(rob_id)};
-        end
-        time = [time,...
-                robs{rob_id}.pose{pose_id(rob_id)+1}.time-robs{rob_id}.pose{pose_id(rob_id)}.time];
-        
         pose_id(rob_id) = pose_id(rob_id)+1;
-        poses = [poses, pose_id];
         
         % detemine control
-        control = [ sqrt((pose.x-prev_pose.x)^2+...
-                        (pose.y-prev_pose.y)^2);...
-                        (pose.theta-prev_pose.theta) ];
+        %         control = [pose.vel_x; pose.vel_y; pose.vel_theta];
+        %         if control(1)==0 && control(2)==0 && control(3)==0      % zeros pruning
+        %             PARAM.prev_time(1,rob_id) = pose.time;
+        %             PARAM.prev_pose(:,rob_id) = [pose.x; pose.y; pose.theta];
+        %             continue;
+        %         else
         
-        if control(1)==0 && control(2)==0  % zeros pruning
-            %PARAM.prev_time(1,rob_id) = pose.time;
+        dt = pose.time - PARAM.prev_time(1,rob_id);
+        control = [ pose.x-PARAM.prev_pose(1,rob_id);
+                    pose.y-PARAM.prev_pose(2,rob_id);
+                    pose.theta-PARAM.prev_pose(3,rob_id)];
+        if control(1) == 0 && control(2) == 0 && control(3) == 0
+            PARAM.prev_time(1,rob_id) = pose.time;
+            PARAM.prev_pose(:,rob_id) = [pose.x; pose.y; pose.theta];
+            continue;
         else
+            control(1) = control(1) + rand/1000;
+            control(2) = control(2) + rand/1000;
+            control(3) = control(3) + rand/1000;
             robs_id = [robs_id,rob_id];
-            %time = [time, pose.time - PARAM.prev_time(1,rob_id)];
-            controls = [controls, control./time(end)];
-            %PARAM.prev_time(1,rob_id) = pose.time;
+            time = [time, dt];
+            controls = [controls, control];
+            PARAM.prev_time(1,rob_id) = pose.time;
+            PARAM.prev_pose(:,rob_id) = [pose.x; pose.y; pose.theta];
         end
-
+        %
+        %         end
+        
     else
-
+        
         % parse id and poses
         rob_id = (min_rob+1)/2;
         robs_id = [robs_id,rob_id];
-
+        
         % determine state
         pose = robs{rob_id}.pose{pose_id(rob_id)};
         state = [pose.x; pose.y; pose.theta];
+        % states = [states, state];
         
         % detemine observation
         lasers = robs{rob_id}.laser{laser_id(rob_id)};
@@ -103,7 +110,7 @@ while ~observed
             observations = [observations obs];
         end
         observed = true;
-
+        
     end
     
 end

@@ -7,9 +7,10 @@ global PARAM;                           % global variables, should be updated
 
 [s_r,s_c] = size(state);
 last_state = state(:,s_c);
-augument_R =[];
+new_R =[];
 robot_id = robot_id(1:length(robot_id) - 1); %exclude obsevcation
-overall_control = zeros(2,4);
+%overall_control = zeros(2,4);
+overall_control = zeros(3,4);
 overall_dt = zeros(1,4);
 %combine control
 for id = 1:4
@@ -20,9 +21,17 @@ for id = 1:4
     end
 end
 
-augument_R = zeros(12,12);
+
+M = diag([INFO.Sigma_v,INFO.Sigma_v,INFO.Sigma_omega].^2);
+
+default_w = inv((M')^0.5);
+new_R = zeros(12,12);
+
 augument_I = zeros(12,12);
-M = diag([INFO.Sigma_v,INFO.Sigma_omega].^2);
+for i = 1:4
+    augument_I(3*i-2:3*i,3*i-2:3*i)= -default_w*eye(3,3);
+end
+
 
 unique_id = unique(robot_id);
 for i = 1:length(unique_id)
@@ -32,13 +41,14 @@ for i = 1:length(unique_id)
     omega = overall_control(2,id);
     dt = overall_dt(id);
     
-    
-    Gt = [ 1, 0, -dt*v*sin(theta + dt*omega);
-        0, 1,  dt*v*cos(theta + dt*omega);
-        0, 0,                        1];
-    Vt = [ dt*cos(theta + dt*omega), -dt^2*v*sin(theta + dt*omega);
-        dt*sin(theta + dt*omega),  dt^2*v*cos(theta + dt*omega);
-        0,                          dt];
+    Gt = eye(3);
+    Vt = eye(3);
+%     Gt = [ 1, 0, -dt*v*sin(theta + dt*omega);
+%         0, 1,  dt*v*cos(theta + dt*omega);
+%         0, 0,                        1];
+%     Vt = [ dt*cos(theta + dt*omega), -dt^2*v*sin(theta + dt*omega);
+%         dt*sin(theta + dt*omega),  dt^2*v*cos(theta + dt*omega);
+%         0,                          dt];
     
     
     
@@ -57,15 +67,15 @@ for i = 1:length(unique_id)
     end
     
     w = inv((Q')^0.5);
-    augument_R(3*id-2:3*id,3*id-2:3*id) = w*Gt;
+    new_R(3*id-2:3*id,3*id-2:3*id) = w*Gt;
     augument_I(3*id-2:3*id,3*id-2:3*id) = -w*eye(3);
 end
 
 [R_r,R_c] = size(R);
-augument_R = [zeros(12,R_c-12),augument_R,augument_I];
+new_R = [zeros(12,R_c-12),new_R,augument_I];
 lamda = zeros(12,1);
 R = sparse(R);
-[R, d] = Givens_Rotation(R, d, augument_R, lamda);
+[R, d] = Givens_Rotation(R, d, new_R, lamda);
 R = sparse(R);
 
 end
